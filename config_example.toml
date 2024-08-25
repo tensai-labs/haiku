@@ -1,0 +1,52 @@
+[metadata]
+torii_url = ""
+ai_url = ""
+vectorization_url = ""
+
+[context]
+story = "Once upon a time, a brave adventurer set out on a perilous journey to find a legendary artifact. Along the way, they encountered fierce monsters, treacherous terrain, and cunning puzzles that tested their wit and strength. Despite the challenges, the adventurer persevered, making unlikely allies and discovering hidden truths about themselves and the world. Finally, after overcoming a great trial, they reached their goal, forever changed by the experiences of their incredible quest."
+
+[[events]]
+namespace = "eternum"
+name = "BattlePillage"
+keys = {
+    pillager_id,
+    realm_id"
+}
+fields_context = "The realm ${pillager_id} is pillaging the realm ${realm_id} and the success is ${pillage_success}. The amount that was pillaged is ${amount}. The pillager has lost ${lost_troops_pillager} while the pillaged realm has lost ${lost_troops_defender}"
+storage_keys = [
+    "pillager_id",
+    "realm_id"
+]
+memory_keys = [
+    "pillager_id",
+    "realm_id"
+]
+alias = {
+    pillager_id = "realm_id",
+    realm_id = "realm_id"
+}
+
+[[events]]
+namespace = "eternum"
+name = "BattleJoin"
+context = "Pillaging is a realm is a disgusting event where armies of a realm travels to another realm and steals their resources and burn their crops."
+keys = {
+    joiner_id = "the realm who joins the battle",
+}
+values = {
+    battle_id = "the id of the battle that the army just joined",
+    joiner_troops = "the number of troops that the realm uses to join the battle", 
+    attacking_side_troops = "the number of troops on the attacking side",
+    defending_side_troops = "the number of troops on the defending side",
+    time = "the amount of time that the battle will last"
+}
+storage_keys = [
+    "joiner_id",
+]
+memory_keys = [
+    "joiner_id",
+]
+alias = {
+    joiner_id = "realm_id",
+}
