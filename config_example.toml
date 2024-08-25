@@ -1,52 +1,101 @@
-[metadata]
+[haiku]
+name = "haiku_example"
+
+[haiku.metadata]
 torii_url = ""
 ai_url = ""
 vectorization_url = ""
 
-[context]
-story = "Once upon a time, a brave adventurer set out on a perilous journey to find a legendary artifact. Along the way, they encountered fierce monsters, treacherous terrain, and cunning puzzles that tested their wit and strength. Despite the challenges, the adventurer persevered, making unlikely allies and discovering hidden truths about themselves and the world. Finally, after overcoming a great trial, they reached their goal, forever changed by the experiences of their incredible quest."
+[haiku.context]
+story = """
+Once upon a time, a brave adventurer set out on a perilous journey to find a legendary artifact. 
+Along the way, they encountered fierce monsters, treacherous terrain, and cunning puzzles that tested their wit and strength. 
+Despite the challenges, the adventurer persevered, making unlikely allies and discovering hidden truths about themselves and the world. 
+Finally, after overcoming a great trial, they reached their goal, forever changed by the experiences of their incredible quest.
+"""
 
 [[events]]
-namespace = "eternum"
-name = "BattlePillage"
+tag = "eternum-BattlePillage"
 keys = [
-    "pillager_id",
-    "realm_id"
+    "pillager_entity_id",
+    "target_entity_id",
 ]
-fields_context = "The realm ${pillager_id} is pillaging the realm ${realm_id} and the success is ${pillage_success}. The amount that was pillaged is ${amount}. The pillager has lost ${lost_troops_pillager} while the pillaged realm has lost ${lost_troops_defender}."
-storage_keys = [
-    "pillager_id",
-    "realm_id"
-]
-memory_keys = [
-    "pillager_id",
-    "realm_id"
-]
-alias = [
-    { pillager_id = "realm_id" },
-    { realm_id = "realm_id" }
+values = [
+    "pillage_success",
+    "amount",
+    "lost_troops_pillager",
+    "lost_troops_defender",
 ]
 
-[[events]]
-namespace = "eternum"
-name = "BattleJoin"
-context = "Pillaging is a realm is a disgusting event where armies of a realm travels to another realm and steals their resources and burn their crops."
-keys = {
-    joiner_id = "the realm who joins the battle"
-}
-values = {
-    battle_id = "the id of the battle that the army just joined",
-    joiner_troops = "the number of troops that the realm uses to join the battle", 
-    attacking_side_troops = "the number of troops on the attacking side",
-    defending_side_troops = "the number of troops on the defending side",
-    time = "the amount of time that the battle will last"
-}
+[events.fields_context]
+template = """
+The realm ${pillager_entity_id} is pillaging the realm ${target_entity_id} and the success is ${pillage_success}. 
+The amount that was pillaged is ${amount}. 
+The pillager has lost ${lost_troops_pillager} while the pillaged realm has lost ${lost_troops_defender}.
+"""
+
+[events.ai_keys]
 storage_keys = [
-    "joiner_id"
+    "pillager_entity_id",
+    "target_entity_id",
 ]
 memory_keys = [
-    "joiner_id"
+    "pillager_entity_id",
+    "target_entity_id",
 ]
-alias = [
-    { joiner_id = "realm_id" },
+
+[[events.alias]]
+key = "pillager_entity_id"
+alias = "realm_entity_id"
+
+[[events.alias]]
+key = "target_entity_id"
+alias = "realm_entity_id"
+
+[[events.models]]
+tag = "eternum-Realm"
+model_key = "entity_id"
+event_key = "pillager_entity_id"
+
+[[events.models]]
+tag = "eternum-Realm"
+model_key = "entity_id"
+event_key = "target_entity_id"
+
+[[events]]
+tag = "eternum-BattleJoin"
+keys = [
+    "joiner_entity_id",
 ]
+values = [
+    "battle_id",
+    "joiner_troops",
+    "attacking_side_troops",
+    "defending_side_troops",
+    "time",
+]
+
+[events.fields_context]
+template = """
+The realm ${joiner_entity_id} is joining a battle with ID ${battle_id}. 
+They are contributing ${joiner_troops} troops. 
+The attacking side has ${attacking_side_troops} troops, while the defending side has ${defending_side_troops} troops. 
+The battle will last for ${time}.
+"""
+
+[events.ai_keys]
+storage_keys = [
+    "joiner_entity_id",
+]
+memory_keys = [
+    "joiner_entity_id",
+]
+
+[[events.alias]]
+key = "joiner_entity_id"
+alias = "realm_entity_id"
+
+[[events.models]]
+tag = "eternum-Realm"
+model_key = "entity_id"
+event_key = "joiner_entity_id"
