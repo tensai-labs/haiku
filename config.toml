@@ -10,7 +10,7 @@ ai_url = ""
 ai_token = ""
 vectorization_url = ""
 vectorization_token = ""
-database_url = "torii.db"
+database_url = "haiku.db"
 
 [haiku.context]
 story = """
