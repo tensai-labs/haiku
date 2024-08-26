@@ -3970,6 +3970,7 @@ dependencies = [
  "envy",
  "eyre",
  "poise",
+ "rusqlite",
  "scarb",
  "serde",
  "serenity",
