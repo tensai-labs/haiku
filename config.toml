@@ -1,0 +1,45 @@
+[haiku]
+name = "haiku_example"
+
+[haiku.metadata]
+torii_url = "http://localhost:8080"
+rpc_url = "http://localhost:5050"
+world_address = "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950b2"
+relay_url = ""
+ai_url = ""
+ai_token = ""
+vectorization_url = ""
+vectorization_token = ""
+database_url = "torii.db"
+
+[haiku.context]
+story = """
+Once upon a time, a brave adventurer set out on a perilous journey to find a legendary artifact. 
+Along the way, they encountered fierce monsters, treacherous terrain, and cunning puzzles that tested their wit and strength. 
+Despite the challenges, the adventurer persevered, making unlikely allies and discovering hidden truths about themselves and the world. 
+Finally, after overcoming a great trial, they reached their goal, forever changed by the experiences of their incredible quest.
+"""
+
+[[events]]
+tag = "dojo_examples-Moved"
+
+[events.prompt]
+template = """The player ${player} is moving ${direction}."""
+
+[events.db_keys]
+storage_keys = [
+    "pillager_entity_id",
+    "target_entity_id",
+]
+retrieval_keys = [
+    "pillager_entity_id",
+    "target_entity_id",
+]
+
+[[events.keys_mapping]]
+key = "pillager_entity_id"
+alias = "realm_entity_id"
+
+[[events.keys_mapping]]
+key = "target_entity_id"
+alias = "realm_entity_id"
