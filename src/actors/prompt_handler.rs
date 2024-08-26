@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use dojo_types::primitive::Primitive;
 use dojo_types::schema::{Member, Struct, Ty};
 use tokio::sync::mpsc;
@@ -9,6 +11,7 @@ use torii_relay::{
 };
 
 use crate::types::{config_types::Config, PromptMessage};
+use starknet_crypto::{sign, Felt};
 
 #[derive(Debug)]
 pub struct PromptEventMessage {
@@ -26,7 +29,7 @@ impl PromptEventMessage {
         }
     }
 
-    pub fn to_message(&self) -> Message {
+    pub fn to_message(&self, pk: &Felt) -> Message {
         let model = Ty::Struct(Struct {
             name: "PromptEventMessage".to_string(),
             children: vec![
@@ -50,9 +53,16 @@ impl PromptEventMessage {
 
         let domain = Domain::new("Eternum", "1", "1", Some("1"));
 
+        let signature = sign(
+            pk,
+            &Felt::from_str("haiku").unwrap(),
+            &Felt::from_str(&self.event_id.to_string()).unwrap(),
+        )
+        .unwrap();
+
         Message {
             message: TypedData::from_model(model, domain).unwrap(),
-            signature: vec![],
+            signature: vec![signature.r, signature.s],
         }
     }
 }
@@ -125,7 +135,7 @@ impl PromptHandler {
     ) -> eyre::Result<()> {
         print!("Sending event message: {:?}", event_message);
         self.client
-            .publish_message(event_message.to_message())
+            .publish_message(event_message.to_message(&Felt::from_str(&self.config.pk).unwrap()))
             .await?;
         Ok(())
     }

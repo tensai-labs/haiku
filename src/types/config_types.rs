@@ -16,6 +16,7 @@ impl Config {
 pub struct Config {
     pub haiku: Haiku,
     pub events: Vec<Event>,
+    pub pk: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
