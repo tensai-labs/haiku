@@ -13,7 +13,11 @@ use crate::actors::{event_handler::EventHandler, prompt_handler::PromptHandler};
 
 use self::types::config_types::Config;
 
-async fn setup_torii_client(database: Connection, config: Config) {
+async fn init_services(config: Config) {
+    let database = Connection::open(config.haiku.metadata.database_url.clone())
+        .await
+        .expect("Failed to open database");
+
     let client: Client = Client::new(
         config.haiku.metadata.torii_url.clone(),
         config.haiku.metadata.rpc_url.clone(),
@@ -30,7 +34,7 @@ async fn setup_torii_client(database: Connection, config: Config) {
         .map(|event| event.tag.clone())
         .collect();
 
-    let mut rcv = client
+    let rcv = client
         .on_event_message_updated(vec![EntityKeysClause::Keys(KeysClause {
             keys: vec![],
             pattern_matching: torii_grpc::types::PatternMatching::VariableLen,
@@ -39,7 +43,7 @@ async fn setup_torii_client(database: Connection, config: Config) {
         .await
         .unwrap();
 
-    let (prompt_sender, mut prompt_receiver) = mpsc::channel(100);
+    let (prompt_sender, prompt_receiver) = mpsc::channel(100);
 
     let event_handler = EventHandler::new(prompt_sender, config.clone());
 
@@ -50,21 +54,16 @@ async fn setup_torii_client(database: Connection, config: Config) {
     });
 
     prompt_handler.run().await;
-
-    println!("Torii client setup task spawned");
 }
 
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
+
     let config_file_path = args.get(1);
 
     let config = Config::from_toml(config_file_path.expect("Config file path not provided"))
         .expect("Failed to load config");
 
-    let conn = Connection::open(config.haiku.metadata.database_url.clone())
-        .await
-        .expect("Failed to open database");
-
-    setup_torii_client(conn, config).await
+    init_services(config).await
 }

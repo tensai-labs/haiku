@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::types::{config_types::Config, PromptMessage};
 use dojo_types::{primitive::Primitive, schema::Ty};
 use serenity::futures::StreamExt;
@@ -28,6 +30,8 @@ impl EventHandler {
             return Ok(());
         }
 
+        let mut retrieval_key_values = HashMap::new();
+
         let model_name = entity.models[0].name.clone();
         let event_config = self
             .config
@@ -41,12 +45,25 @@ impl EventHandler {
         entity.models[0].children.iter().for_each(|child| {
             let fmt_str = format!("${{{}}}", child.name);
             finished_string = finished_string.replace(&fmt_str, &ty_to_string(&child.ty));
+
+            if (event_config.db_keys.retrieval_keys.contains(&child.name)) {
+                retrieval_key_values.insert(
+                    child.name.clone(),
+                    child
+                        .ty
+                        .as_primitive()
+                        .expect("Expected a i32")
+                        .as_i32()
+                        .expect("Expected a i32"),
+                );
+            }
         });
 
         self.prompt_sender
             .send(PromptMessage {
                 config_name: event_config.tag.clone(),
                 prompt: finished_string,
+                retrieval_key_values,
             })
             .await?;
 
