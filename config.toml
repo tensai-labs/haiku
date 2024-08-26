@@ -10,7 +10,7 @@ ai_url = "http://localhost:11434/api/generate"
 ai_token = ""
 vectorization_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
 vectorization_token = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-database_url = "torii.db"
+database_url = "haiku.db"
 
 [haiku.context]
 story = """
@@ -28,16 +28,14 @@ template = """The player ${player} is moving ${direction}."""
 
 [events.db_keys]
 storage_keys = [
-    "pillager_entity_id",
-    "target_entity_id",
+    "player",
 ]
 retrieval_keys = [
-    "pillager_entity_id",
-    "target_entity_id",
+    "player",
 ]
 
 [[events.keys_mapping]]
-key = "pillager_entity_id"
+key = "slip"
 alias = "realm_entity_id"
 
 [[events.keys_mapping]]

@@ -1,6 +1,7 @@
+use config::Config;
+use eyre::eyre;
 use reqwest::Client;
 use serde_json::Value;
-use config::Config;
 
 pub struct LlmClient {
     client: Client,
@@ -25,36 +26,49 @@ impl LlmClient {
         })
     }
 
-    pub async fn request_chat_completion(&self, text: &str) -> Result<String, Box<dyn std::error::Error>> {
-        let response = self.client
-            .post(&self.chat_completion_url)
+    pub async fn request_chat_completion(&self, text: &str) -> eyre::Result<String> {
+        let response = self
+            .client
+            .post(&self.ai_url)
             .header("Content-Type", "application/json")
             .json(&serde_json::json!({
-                "model": "uncensored-dolphin",
+                "model": "my-dolphin",
                 "prompt": text,
                 "stream": false
             }))
             .send()
             .await?;
-
+        tracing::info!("test");
         if !response.status().is_success() {
-            return Err(format!("API request failed: {}", response.status()).into());
+            return Err(eyre!(format!("API request failed: {}", response.status())));
         }
+        tracing::info!("1");
 
         let json: Value = response.json().await?;
-        
+        tracing::info!("2");
+
         let response_text = json["response"]
             .as_str()
-            .ok_or("Invalid JSON structure: 'response' field not found or not a string")?
+            .ok_or(eyre!(
+                "Invalid JSON structure: 'response' field not found or not a string"
+            ))?
             .to_string();
+        tracing::info!("3");
 
         Ok(response_text)
     }
 
-    pub async fn request_embedding(&self, text: &str) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
-        let response = self.client
+    pub async fn request_embedding(
+        &self,
+        text: &str,
+    ) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
+        let response = self
+            .client
             .post(&self.vectorization_url)
-            .header("Authorization", format!("Bearer {}", self.vectorization_token))
+            .header(
+                "Authorization",
+                format!("Bearer {}", self.vectorization_token),
+            )
             .header("Content-Type", "application/json")
             .json(&serde_json::json!({ "inputs": text }))
             .send()

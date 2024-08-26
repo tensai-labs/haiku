@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, convert::TryInto};
 
 use crate::types::{config_types::Config, PromptMessage};
 use dojo_types::{primitive::Primitive, schema::Ty};
@@ -46,16 +46,19 @@ impl EventHandler {
             let fmt_str = format!("${{{}}}", child.name);
             finished_string = finished_string.replace(&fmt_str, &ty_to_string(&child.ty));
 
-            if (event_config.db_keys.retrieval_keys.contains(&child.name)) {
-                retrieval_key_values.insert(
-                    child.name.clone(),
-                    child
-                        .ty
-                        .as_primitive()
-                        .expect("Expected a i32")
-                        .as_i32()
-                        .expect("Expected a i32"),
-                );
+            if event_config.db_keys.retrieval_keys.contains(&child.name) {
+                let primitive = child
+                    .ty
+                    .as_primitive()
+                    .expect("Expected a primitive")
+                    .clone();
+                tracing::info!("primitive: {:?}", primitive);
+                let felts = primitive
+                    .serialize()
+                    .expect("Failed to deserialize primitive");
+
+                tracing::info!("felts {:?}", felts);
+                retrieval_key_values.insert(child.name.clone(), felts[0].to_hex_string());
             }
         });
 

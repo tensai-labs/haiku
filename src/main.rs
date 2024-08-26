@@ -1,22 +1,24 @@
 mod actors;
 mod types;
+mod utils;
 
 use tokio::sync::mpsc;
 
 use starknet_crypto::Felt;
-use tokio_rusqlite::Connection;
 use torii_client::client::Client;
 
 use torii_grpc::types::{EntityKeysClause, KeysClause};
+use tracing_subscriber::EnvFilter;
 
 use crate::actors::{event_handler::EventHandler, prompt_handler::PromptHandler};
 
 use self::types::config_types::Config;
+use crate::utils::db_manager::DbManager;
 
 async fn init_services(config: Config) {
-    let database = Connection::open(config.haiku.metadata.database_url.clone())
+    let database = DbManager::init_db(&config)
         .await
-        .expect("Failed to open database");
+        .expect("Failed to initialize database");
 
     let client: Client = Client::new(
         config.haiku.metadata.torii_url.clone(),
@@ -26,7 +28,8 @@ async fn init_services(config: Config) {
     )
     .await
     .expect("Failed to connect to the Torii client");
-    println!("Setting up Torii client");
+
+    tracing::info!("Torii client successfully connected");
 
     let models_for_subscription = config
         .events
@@ -58,6 +61,10 @@ async fn init_services(config: Config) {
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::new("haiku=trace"))
+        .init();
+
     let args: Vec<String> = std::env::args().collect();
 
     let config_file_path = args.get(1);

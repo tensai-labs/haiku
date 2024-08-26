@@ -6,8 +6,9 @@ edition = "2018"
 
 [dependencies]
 dotenv = "0.15"
-tracing = "0.1.23"
-tracing-subscriber = "0.3"
+tracing = { version = "0.1", default-features = false, features = ["attributes"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
 serde = { version = "1.0.197", default-features = false, features = ["derive"] }
 dotenvy = { version = "0.15.7", default-features = false }
 envy = { version = "0.4.2", default-features = false }
