@@ -29,7 +29,7 @@ async fn setup_torii_client(database: Connection, config: Config) {
         .iter()
         .map(|event| event.tag.clone())
         .collect();
-    println!("models {:?}", models_for_subscription);
+
     let mut rcv = client
         .on_event_message_updated(vec![EntityKeysClause::Keys(KeysClause {
             keys: vec![],

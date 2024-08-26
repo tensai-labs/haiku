@@ -13,6 +13,12 @@ impl Config {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Config {
+    pub haiku: Haiku,
+    pub events: Vec<Event>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Haiku {
     pub name: String,
     pub metadata: Metadata,
@@ -58,10 +64,4 @@ pub struct DbKeys {
 pub struct KeysMapping {
     pub key: String,
     pub alias: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Config {
-    pub haiku: Haiku,
-    pub events: Vec<Event>,
 }
