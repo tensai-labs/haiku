@@ -6,10 +6,10 @@ torii_url = "http://localhost:8080"
 rpc_url = "http://localhost:5050"
 world_address = "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950b2"
 relay_url = ""
-ai_url = ""
+ai_url = "http://localhost:11434/api/generate"
 ai_token = ""
-vectorization_url = ""
-vectorization_token = ""
+vectorization_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
+vectorization_token = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 database_url = "torii.db"
 
 [haiku.context]
