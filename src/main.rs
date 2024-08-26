@@ -43,7 +43,7 @@ async fn setup_torii_client(database: Connection, config: Config) {
 
     let event_handler = EventHandler::new(prompt_sender, config.clone());
 
-    let mut prompt_handler = PromptHandler::new(prompt_receiver, config.clone(), database);
+    let mut prompt_handler = PromptHandler::new(prompt_receiver, config.clone(), database, client);
 
     tokio::spawn(async move {
         event_handler.run(rcv).await;
