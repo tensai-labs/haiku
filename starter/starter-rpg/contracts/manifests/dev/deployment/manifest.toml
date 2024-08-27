@@ -1,0 +1,137 @@
+[world]
+kind = "WorldContract"
+class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
+original_class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
+abi = "manifests/dev/deployment/abis/dojo-world.json"
+address = "0x128bda34ac94a34dc53ea0ee024649f80ace13312a7dacdc9d541e6d4165ac1"
+transaction_hash = "0x45a923cee9323933db402f7e4cca854a61e2fbbc909d4ff349c23aaa51b7c28"
+block_number = 3
+seed = "dojo_starter_rpg"
+manifest_name = "dojo-world"
+
+[world.metadata]
+profile_name = "dev"
+rpc_url = "http://localhost:5050/"
+
+[base]
+kind = "Class"
+class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+original_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/dev/deployment/abis/dojo-base.json"
+tag = "dojo-base"
+manifest_name = "dojo-base"
+
+[[contracts]]
+kind = "DojoContract"
+address = "0x73d4021e58050b2f4f28b19429b8db223ff7146f4e7d02448e3bc6bd72f865"
+class_hash = "0x74118047b1d9d524952280715318280003f04bb7dd4bba28cbc3e796926b288"
+original_class_hash = "0x74118047b1d9d524952280715318280003f04bb7dd4bba28cbc3e796926b288"
+base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/dev/deployment/abis/contracts/dojo_starter_rpg-actions-4afbdb7a.json"
+reads = []
+writes = [
+    "dojo_starter_rpg-Player",
+    "dojo_starter_rpg-Dungeon",
+]
+init_calldata = []
+tag = "dojo_starter_rpg-actions"
+systems = [
+    "spawn",
+    "move",
+    "attack",
+    "heal",
+]
+manifest_name = "dojo_starter_rpg-actions-4afbdb7a"
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x3b8d4fef9b46617a99b9050200048edc7e522c4f388e23d262bd29f3e7eb53c"
+original_class_hash = "0x3b8d4fef9b46617a99b9050200048edc7e522c4f388e23d262bd29f3e7eb53c"
+abi = "manifests/dev/deployment/abis/models/dojo_starter_rpg-Dungeon-437fd4ba.json"
+tag = "dojo_starter_rpg-Dungeon"
+qualified_path = "rpg::models::index::dungeon"
+manifest_name = "dojo_starter_rpg-Dungeon-437fd4ba"
+
+[[models.members]]
+name = "id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "monster"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "damage"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "reward"
+type = "u16"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x2cb22c61577afc5f6c2977f2c40f005aa67d96524cbb0e925607c23e10a718e"
+original_class_hash = "0x2cb22c61577afc5f6c2977f2c40f005aa67d96524cbb0e925607c23e10a718e"
+abi = "manifests/dev/deployment/abis/models/dojo_starter_rpg-Player-12268099.json"
+tag = "dojo_starter_rpg-Player"
+qualified_path = "rpg::models::index::player"
+manifest_name = "dojo_starter_rpg-Player-12268099"
+
+[[models.members]]
+name = "id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "mode"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "damage"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "gold"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "score"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "seed"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "name"
+type = "felt252"
+key = false
