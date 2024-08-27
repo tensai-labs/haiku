@@ -17,15 +17,25 @@ use starknet_crypto::{sign, Felt};
 
 #[derive(Debug)]
 pub struct PromptEventMessage {
+    pub project_name: String,
     pub event_id: u32,
+    pub event_tag: String,
     pub prompt: String,
     pub timestamp: u64,
 }
 
 impl PromptEventMessage {
-    pub fn new(event_id: u32, prompt: String, timestamp: u64) -> Self {
+    pub fn new(
+        project_name: String,
+        event_id: u32,
+        event_tag: String,
+        prompt: String,
+        timestamp: u64,
+    ) -> Self {
         Self {
+            project_name,
             event_id,
+            event_tag,
             prompt,
             timestamp,
         }
@@ -38,6 +48,11 @@ impl PromptEventMessage {
                 Member {
                     name: "event_id".to_string(),
                     ty: Ty::Primitive(Primitive::U32(Some(self.event_id))),
+                    key: true,
+                },
+                Member {
+                    name: "event_tag".to_string(),
+                    ty: Ty::ByteArray(self.event_tag.clone()),
                     key: false,
                 },
                 Member {
@@ -53,7 +68,7 @@ impl PromptEventMessage {
             ],
         });
 
-        let domain = Domain::new("Eternum", "1", "1", Some("1"));
+        let domain = Domain::new(&self.project_name, "1", "1", Some("1"));
 
         let signature = sign(
             pk,
@@ -93,7 +108,6 @@ impl PromptHandler {
 
     pub async fn run(&mut self) {
         while let Some(prompt) = self.prompt_receiver.recv().await {
-            println!("prompt: {:?}", prompt);
             self.handle_prompt(prompt).await;
         }
     }
@@ -103,7 +117,7 @@ impl PromptHandler {
             .config
             .events
             .iter()
-            .find(|event| event.tag == prompt.config_name)
+            .find(|event| event.tag == prompt.event_tag)
             .ok_or(eyre::eyre!("Event not found"))?;
 
         let retrieval_key_values = prompt.retrieval_key_values;
@@ -163,7 +177,13 @@ impl PromptHandler {
             .await?;
 
         // send message to event messaging
-        let event_message = PromptEventMessage::new(1, prompt.prompt, 0);
+        let event_message = PromptEventMessage::new(
+            self.config.haiku.name.clone(),
+            prompt.event_id,
+            prompt.event_tag,
+            prompt.prompt,
+            prompt.timestamp,
+        );
 
         self.send_event_messaging(event_message).await?;
 
@@ -176,7 +196,10 @@ impl PromptHandler {
     ) -> eyre::Result<()> {
         print!("Sending event message: {:?}", event_message);
         self.client
-            .publish_message(event_message.to_message(&Felt::from_str(&self.config.pk).unwrap()))
+            .publish_message(
+                event_message
+                    .to_message(&Felt::from_str(&self.config.haiku.metadata.private_key).unwrap()),
+            )
             .await?;
         Ok(())
     }

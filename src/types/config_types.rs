@@ -16,7 +16,6 @@ impl Config {
 pub struct Config {
     pub haiku: Haiku,
     pub events: Vec<Event>,
-    pub pk: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -35,6 +34,7 @@ pub struct Metadata {
     pub vectorization_url: String,
     pub database_url: String,
     pub world_address: String,
+    pub private_key: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
