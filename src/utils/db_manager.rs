@@ -7,6 +7,11 @@ use sqlite_vec::sqlite3_vec_init;
 
 pub struct DbManager;
 
+// Used by sqlite_vec test fn
+use std::convert::TryInto;
+use tokio_rusqlite::params;
+use zerocopy::AsBytes;
+
 impl DbManager {
     pub async fn init_db(config: &Config) -> eyre::Result<Connection> {
         unsafe {
@@ -99,6 +104,10 @@ impl DbManager {
         Ok(())
     }
 
+    // pub async fn insert_embedding(database: &Connection, storage_keys: ) {
+
+    // }
+
     // Sanity check: sqlite vec extension is loaded
     pub async fn sqlite_vec_version(database: &Connection) -> eyre::Result<()> {
         let version: String = database
@@ -113,4 +122,58 @@ impl DbManager {
 
         Ok(())
     }
+}
+
+pub async fn test_sqlite_vec_db(database: &Connection) -> eyre::Result<Vec<f32>> {
+    let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
+    // Cloned to be able to assert at the bottom of the fn
+    let float_vec_clone = float_vec.clone();
+
+    // Sanity check: insert vector embedding
+    database
+        .call(move |db| {
+            db.execute(
+                "INSERT INTO embeddings (embedding) VALUES (?)",
+                // Convert Vec<f32> to Vec<u8>
+                params![float_vec_clone.as_bytes()],
+            )
+            .map_err(|e| e.into())
+        })
+        .await
+        .expect("Failed to insert row");
+
+    // Sanity check: retrieve stored vector embedding
+    let result: Vec<u8> = database
+        .call(|db| {
+            db.query_row(
+                "
+                SELECT
+                    embedding
+                FROM embeddings
+                ",
+                [],
+                |row| row.get(0),
+            )
+            .map_err(|e| e.into())
+        })
+        .await
+        .expect("Failed to retrieve row");
+
+    // Convert Vec<u8> back to Vec<f32>
+    let float_vec: Vec<f32> = result
+        .chunks_exact(4)
+        .map(|chunk| {
+            let arr: [u8; 4] = chunk.try_into().expect("Chunk must be 4 bytes");
+            f32::from_le_bytes(arr)
+        })
+        .collect();
+
+    // Ensure no precision is lost
+    assert_eq!(
+        float_vec,
+        vec![0.1, 0.2, 0.3, 0.4],
+        "Values should be identical"
+    );
+
+    Ok(float_vec)
 }
