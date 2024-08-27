@@ -11,6 +11,7 @@ ai_token = ""
 vectorization_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
 vectorization_token = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 database_url = "haiku.db"
+private_key = "0x0101010101010101010101010101010101010101010101010101010101010101"
 
 [haiku.context]
 story = """

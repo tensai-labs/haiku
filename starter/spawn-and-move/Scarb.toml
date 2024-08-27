@@ -1,0 +1,23 @@
+[package]
+cairo-version = "=2.7.0"
+name = "dojo_examples"
+version = "1.0.0-alpha.6"
+# Use the prelude with the less imports as possible
+# from corelib.
+edition = "2024_07"
+
+[cairo]
+sierra-replace-ids = true
+
+[dependencies]
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
+armory = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
+bestiary = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
+
+
+[[target.dojo]]
+build-external-contracts = [ "armory::Flatbow", "bestiary::RiverSkale" ]
+
+[features]
+default = [ "dungeon" ]
+dungeon = [  ]

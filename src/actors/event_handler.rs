@@ -42,9 +42,29 @@ impl EventHandler {
 
         let mut finished_string = event_config.prompt.template.clone();
 
+        let mut prompt_message = PromptMessage::default();
+
         entity.models[0].children.iter().for_each(|child| {
             let fmt_str = format!("${{{}}}", child.name);
             finished_string = finished_string.replace(&fmt_str, &ty_to_string(&child.ty));
+
+            if child.name == "event_id" {
+                prompt_message.event_id = child
+                    .ty
+                    .as_primitive()
+                    .expect("Expected a primitive")
+                    .as_u32()
+                    .expect("Expected a u32");
+            }
+
+            if child.name == "timestamp" {
+                prompt_message.timestamp = child
+                    .ty
+                    .as_primitive()
+                    .expect("Expected a primitive")
+                    .as_u64()
+                    .expect("Expected a u64");
+            }
 
             if event_config.db_keys.retrieval_keys.contains(&child.name) {
                 let primitive = child
@@ -62,13 +82,7 @@ impl EventHandler {
             }
         });
 
-        self.prompt_sender
-            .send(PromptMessage {
-                config_name: event_config.tag.clone(),
-                prompt: finished_string,
-                retrieval_key_values,
-            })
-            .await?;
+        self.prompt_sender.send(prompt_message).await?;
 
         Ok(())
     }
