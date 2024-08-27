@@ -34,6 +34,7 @@ pub struct Metadata {
     pub vectorization_url: String,
     pub database_url: String,
     pub world_address: String,
+    pub private_key: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
