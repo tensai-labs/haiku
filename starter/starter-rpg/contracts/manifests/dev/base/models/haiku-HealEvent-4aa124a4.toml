@@ -1,0 +1,57 @@
+kind = "DojoModel"
+class_hash = "0x1a7bcbecd271866164a7b7f95522d9de78ca6504878ad5cdd7c5b120aa22877"
+original_class_hash = "0x1a7bcbecd271866164a7b7f95522d9de78ca6504878ad5cdd7c5b120aa22877"
+abi = "manifests/dev/base/abis/models/haiku-HealEvent-4aa124a4.json"
+tag = "haiku-HealEvent"
+qualified_path = "rpg::components::playable::PlayableComponent::heal_event"
+manifest_name = "haiku-HealEvent-4aa124a4"
+
+[[members]]
+name = "player_id"
+type = "felt252"
+key = true
+
+[[members]]
+name = "id"
+type = "u32"
+key = true
+
+[[members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[members]]
+name = "player_role"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_mode"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_health"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_gold"
+type = "u16"
+key = false
+
+[[members]]
+name = "player_score"
+type = "u16"
+key = false
+
+[[members]]
+name = "player_name"
+type = "felt252"
+key = false
+
+[[members]]
+name = "quantity"
+type = "u8"
+key = false

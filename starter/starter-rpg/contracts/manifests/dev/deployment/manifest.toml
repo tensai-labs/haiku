@@ -5,7 +5,7 @@ original_class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162
 abi = "manifests/dev/deployment/abis/dojo-world.json"
 address = "0x128bda34ac94a34dc53ea0ee024649f80ace13312a7dacdc9d541e6d4165ac1"
 transaction_hash = "0x45a923cee9323933db402f7e4cca854a61e2fbbc909d4ff349c23aaa51b7c28"
-block_number = 3
+block_number = 15
 seed = "dojo_starter_rpg"
 manifest_name = "dojo-world"
 
@@ -24,8 +24,8 @@ manifest_name = "dojo-base"
 [[contracts]]
 kind = "DojoContract"
 address = "0x73d4021e58050b2f4f28b19429b8db223ff7146f4e7d02448e3bc6bd72f865"
-class_hash = "0x74118047b1d9d524952280715318280003f04bb7dd4bba28cbc3e796926b288"
-original_class_hash = "0x74118047b1d9d524952280715318280003f04bb7dd4bba28cbc3e796926b288"
+class_hash = "0x4a30d68c766eca9ecd60bdd39d0333a9afbd3993800e1dc803c18af66bee5c6"
+original_class_hash = "0x4a30d68c766eca9ecd60bdd39d0333a9afbd3993800e1dc803c18af66bee5c6"
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/dev/deployment/abis/contracts/dojo_starter_rpg-actions-4afbdb7a.json"
 reads = []
@@ -133,5 +133,286 @@ key = false
 
 [[models.members]]
 name = "name"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x4b62eaf8033fe92627f262746bb8ee57dd8f932c92fea35fd3f3fefc18a573d"
+original_class_hash = "0x4b62eaf8033fe92627f262746bb8ee57dd8f932c92fea35fd3f3fefc18a573d"
+abi = "manifests/dev/deployment/abis/models/haiku-AttackEvent-7bdb02fd.json"
+tag = "haiku-AttackEvent"
+qualified_path = "rpg::components::playable::PlayableComponent::attack_event"
+manifest_name = "haiku-AttackEvent-7bdb02fd"
+
+[[models.members]]
+name = "player_id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "player_role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_mode"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_gold"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_score"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_name"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "dungeon_monster"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "dungeon_role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "dungeon_damage"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "dungeon_health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "dungeon_reward"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "has_defeated_dungeon"
+type = "bool"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x1a7bcbecd271866164a7b7f95522d9de78ca6504878ad5cdd7c5b120aa22877"
+original_class_hash = "0x1a7bcbecd271866164a7b7f95522d9de78ca6504878ad5cdd7c5b120aa22877"
+abi = "manifests/dev/deployment/abis/models/haiku-HealEvent-4aa124a4.json"
+tag = "haiku-HealEvent"
+qualified_path = "rpg::components::playable::PlayableComponent::heal_event"
+manifest_name = "haiku-HealEvent-4aa124a4"
+
+[[models.members]]
+name = "player_id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "player_role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_mode"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_gold"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_score"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_name"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "quantity"
+type = "u8"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x6b105b639c0ab8d61032371216ec5ee155a983cc0451a469a827f33b76668e4"
+original_class_hash = "0x6b105b639c0ab8d61032371216ec5ee155a983cc0451a469a827f33b76668e4"
+abi = "manifests/dev/deployment/abis/models/haiku-MoveEvent-54195a34.json"
+tag = "haiku-MoveEvent"
+qualified_path = "rpg::components::playable::PlayableComponent::move_event"
+manifest_name = "haiku-MoveEvent-54195a34"
+
+[[models.members]]
+name = "player_id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "direction"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_mode"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_gold"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_score"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_name"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "new_dungeon_monster"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "new_dungeon_role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "new_dungeon_damage"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "new_dungeon_health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "new_dungeon_reward"
+type = "u16"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x72e2f8b7ff645d6eb887cc8d1842bd4abb7efe2eac319e40f313cf8b0349793"
+original_class_hash = "0x72e2f8b7ff645d6eb887cc8d1842bd4abb7efe2eac319e40f313cf8b0349793"
+abi = "manifests/dev/deployment/abis/models/haiku-SpawnEvent-aa8d3a37.json"
+tag = "haiku-SpawnEvent"
+qualified_path = "rpg::components::playable::PlayableComponent::spawn_event"
+manifest_name = "haiku-SpawnEvent-aa8d3a37"
+
+[[models.members]]
+name = "player_id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "player_role"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_mode"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "player_gold"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_score"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "player_name"
 type = "felt252"
 key = false

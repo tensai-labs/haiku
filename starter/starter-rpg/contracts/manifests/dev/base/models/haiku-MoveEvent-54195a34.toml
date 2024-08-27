@@ -1,0 +1,82 @@
+kind = "DojoModel"
+class_hash = "0x6b105b639c0ab8d61032371216ec5ee155a983cc0451a469a827f33b76668e4"
+original_class_hash = "0x6b105b639c0ab8d61032371216ec5ee155a983cc0451a469a827f33b76668e4"
+abi = "manifests/dev/base/abis/models/haiku-MoveEvent-54195a34.json"
+tag = "haiku-MoveEvent"
+qualified_path = "rpg::components::playable::PlayableComponent::move_event"
+manifest_name = "haiku-MoveEvent-54195a34"
+
+[[members]]
+name = "player_id"
+type = "felt252"
+key = true
+
+[[members]]
+name = "id"
+type = "u32"
+key = true
+
+[[members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[members]]
+name = "direction"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_role"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_mode"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_health"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_gold"
+type = "u16"
+key = false
+
+[[members]]
+name = "player_score"
+type = "u16"
+key = false
+
+[[members]]
+name = "player_name"
+type = "felt252"
+key = false
+
+[[members]]
+name = "new_dungeon_monster"
+type = "u8"
+key = false
+
+[[members]]
+name = "new_dungeon_role"
+type = "u8"
+key = false
+
+[[members]]
+name = "new_dungeon_damage"
+type = "u8"
+key = false
+
+[[members]]
+name = "new_dungeon_health"
+type = "u8"
+key = false
+
+[[members]]
+name = "new_dungeon_reward"
+type = "u16"
+key = false
