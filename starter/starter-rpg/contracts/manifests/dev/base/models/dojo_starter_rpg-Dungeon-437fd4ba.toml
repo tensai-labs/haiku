@@ -1,0 +1,37 @@
+kind = "DojoModel"
+class_hash = "0x3b8d4fef9b46617a99b9050200048edc7e522c4f388e23d262bd29f3e7eb53c"
+original_class_hash = "0x3b8d4fef9b46617a99b9050200048edc7e522c4f388e23d262bd29f3e7eb53c"
+abi = "manifests/dev/base/abis/models/dojo_starter_rpg-Dungeon-437fd4ba.json"
+tag = "dojo_starter_rpg-Dungeon"
+qualified_path = "rpg::models::index::dungeon"
+manifest_name = "dojo_starter_rpg-Dungeon-437fd4ba"
+
+[[members]]
+name = "id"
+type = "felt252"
+key = true
+
+[[members]]
+name = "monster"
+type = "u8"
+key = false
+
+[[members]]
+name = "role"
+type = "u8"
+key = false
+
+[[members]]
+name = "damage"
+type = "u8"
+key = false
+
+[[members]]
+name = "health"
+type = "u8"
+key = false
+
+[[members]]
+name = "reward"
+type = "u16"
+key = false

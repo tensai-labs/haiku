@@ -1,0 +1,16 @@
+kind = "DojoContract"
+class_hash = "0x74118047b1d9d524952280715318280003f04bb7dd4bba28cbc3e796926b288"
+original_class_hash = "0x74118047b1d9d524952280715318280003f04bb7dd4bba28cbc3e796926b288"
+base_class_hash = "0x0"
+abi = "manifests/dev/base/abis/contracts/dojo_starter_rpg-actions-4afbdb7a.json"
+reads = []
+writes = []
+init_calldata = []
+tag = "dojo_starter_rpg-actions"
+systems = [
+    "spawn",
+    "move",
+    "attack",
+    "heal",
+]
+manifest_name = "dojo_starter_rpg-actions-4afbdb7a"
