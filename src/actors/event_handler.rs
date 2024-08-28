@@ -103,6 +103,15 @@ impl EventHandler {
         if prompt_message.timestamp == 0 {
             return Err(eyre!("event received doesn't have a timestamp"));
         }
+
+        if prompt_message.event_tag.is_empty() {
+            return Err(eyre!("event tag is empty"));
+        }
+
+        if prompt_message.event_id == 0 {
+            return Err(eyre!("event tag is empty"));
+        }
+
         self.prompt_sender.send(prompt_message).await?;
 
         Ok(())
