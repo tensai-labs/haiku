@@ -4009,6 +4009,7 @@ dependencies = [
  "cainome 0.2.3 (git+https://github.com/cartridge-gg/cainome)",
  "cairo-lang-filesystem",
  "camino",
+ "clap",
  "config",
  "dojo-types",
  "dojo-world",
