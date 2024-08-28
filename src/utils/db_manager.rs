@@ -1,6 +1,5 @@
 use rusqlite::ffi::sqlite3_auto_extension;
 use sqlite_vec::sqlite3_vec_init;
-use std::convert::TryInto;
 use tokio_rusqlite::{params, Connection};
 use zerocopy::AsBytes;
 
@@ -17,8 +16,9 @@ impl DbManager {
         }
 
         #[cfg(not(test))]
-        let database = DbManager::open_connection(&config.haiku.metadata.database_url.clone()).await?;
-    
+        let database =
+            DbManager::open_connection(&config.haiku.metadata.database_url.clone()).await?;
+
         #[cfg(test)]
         let database = DbManager::open_test_connection().await?;
 
@@ -198,10 +198,10 @@ impl DbManager {
     }
 }
 
-// To do: Create in memory DB for tests purposes
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::convert::TryInto;
 
     #[tokio::test]
     async fn test_db_operations() {

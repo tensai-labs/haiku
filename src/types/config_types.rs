@@ -20,18 +20,28 @@ impl Default for Config {
                 metadata: Metadata {
                     torii_url: "http://localhost:8080".to_string(),
                     rpc_url: "http://localhost:5050".to_string(),
-                    world_address: "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950b2".to_string(),
+                    world_address:
+                        "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950b2"
+                            .to_string(),
                     relay_url: "".to_string(),
                     database_url: "haiku.db".to_string(),
-                    signer_address: "0x0101010101010101010101010101010101010101010101010101010101010101".to_string(),
-                    signer_public_key: "0x0101010101010101010101010101010101010101010101010101010101010101".to_string(),
-                    signer_private_key: "0x0101010101010101010101010101010101010101010101010101010101010101".to_string(),
+                    signer_address:
+                        "0x0101010101010101010101010101010101010101010101010101010101010101"
+                            .to_string(),
+                    signer_public_key:
+                        "0x0101010101010101010101010101010101010101010101010101010101010101"
+                            .to_string(),
+                    signer_private_key:
+                        "0x0101010101010101010101010101010101010101010101010101010101010101"
+                            .to_string(),
                 },
                 llm: Llm {
                     model: "haiku".to_string(),
                     ai_url: "http://localhost:11434/api/generate".to_string(),
                     ai_token: "".to_string(),
-                    vectorization_url: "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5".to_string(),
+                    vectorization_url:
+                        "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
+                            .to_string(),
                     vectorization_token: "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".to_string(),
                 },
                 db_config: DbConfig {
@@ -42,28 +52,26 @@ impl Default for Config {
                     story: "The game is a dungeon crawler.".to_string(),
                 },
             },
-            events: vec![
-                Event {
-                    tag: "dojo_examples-Moved".to_string(),
-                    prompt: FieldsContext {
-                        template: "The player ${player} is moving ${direction}.".to_string(),
-                    },
-                    db_keys: DbKeys {
-                        storage_keys: vec!["key1".to_string(), "key2".to_string()],
-                        retrieval_keys: vec!["player".to_string()],
-                    },
-                    keys_mapping: vec![
-                        KeysMapping {
-                            key: "slip".to_string(),
-                            alias: "realm_entity_id".to_string(),
-                        },
-                        KeysMapping {
-                            key: "target_entity_id".to_string(),
-                            alias: "realm_entity_id".to_string(),
-                        },
-                    ],
+            events: vec![Event {
+                tag: "dojo_examples-Moved".to_string(),
+                prompt: FieldsContext {
+                    template: "The player ${player} is moving ${direction}.".to_string(),
                 },
-            ],
+                db_keys: DbKeys {
+                    storage_keys: vec!["key1".to_string(), "key2".to_string()],
+                    retrieval_keys: vec!["player".to_string()],
+                },
+                keys_mapping: vec![
+                    KeysMapping {
+                        key: "slip".to_string(),
+                        alias: "realm_entity_id".to_string(),
+                    },
+                    KeysMapping {
+                        key: "target_entity_id".to_string(),
+                        alias: "realm_entity_id".to_string(),
+                    },
+                ],
+            }],
         }
     }
 }
