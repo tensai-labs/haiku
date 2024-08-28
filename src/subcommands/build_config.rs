@@ -69,7 +69,12 @@ impl BuildConfigSubcommand {
         config.haiku.metadata.torii_url = "http://localhost:8080/".to_string();
         config.haiku.metadata.rpc_url = "http://localhost:5050/".to_string();
         config.haiku.metadata.relay_url = "/ip4/127.0.0.1/udp/9090/quic-v1".to_string();
+        config.haiku.llm.ai_url = "http://localhost:11434/api/generate".to_string();
+        config.haiku.llm.vectorization_url =
+            "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5".to_string();
         config.haiku.context.story = "Replace this text by a compelling narrative that encapsulates the overarching theme, setting, and key elements of your game world. This should provide a rich, immersive context for all subsequent interactions and events.".to_string();
+        config.haiku.db_config.vector_size = "4".to_string();
+        config.haiku.db_config.number_memory_to_retrieve = "1".to_string();
         config.events = events;
 
         // write the config to a config_output.toml file
