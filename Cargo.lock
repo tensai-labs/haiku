@@ -3985,6 +3985,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serenity",
+ "sqlite-vec",
  "starknet 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "starknet-crypto 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "starknet-types-core 0.1.5 (git+https://github.com/dojoengine/types-rs?rev=289e2f0)",
@@ -3996,6 +3997,7 @@ dependencies = [
  "torii-relay",
  "tracing",
  "tracing-subscriber",
+ "zerocopy",
 ]
 
 [[package]]
@@ -8552,6 +8554,15 @@ checksum = "f895e3734318cc55f1fe66258926c9b910c124d47520339efecbb6c59cec7c1f"
 dependencies = [
  "nom",
  "unicode_categories",
+]
+
+[[package]]
+name = "sqlite-vec"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "89f17944e8bbc74fd7b39e4b833f21169342fb6c53c9f39e784d2e2794271aef"
+dependencies = [
+ "cc",
 ]
 
 [[package]]

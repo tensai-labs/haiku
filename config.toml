@@ -16,7 +16,11 @@ model = "haiku"
 ai_url = "http://localhost:11434/api/generate"
 ai_token = ""
 vectorization_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
-vectorization_token = "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"
+vectorization_token = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[haiku.db_config]
+vector_size = "4"
+number_memory_to_retrieve = "1"
 
 [haiku.context]
 story = """The game is a dungeon crawler."""

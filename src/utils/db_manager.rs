@@ -1,4 +1,8 @@
-use tokio_rusqlite::Connection;
+use rusqlite::ffi::sqlite3_auto_extension;
+use sqlite_vec::sqlite3_vec_init;
+use tokio_rusqlite::{params, Connection};
+
+use std::collections::HashMap;
 
 use crate::types::config_types::Config;
 
@@ -6,8 +10,15 @@ pub struct DbManager;
 
 impl DbManager {
     pub async fn init_db(config: &Config) -> eyre::Result<Connection> {
+        unsafe {
+            sqlite3_auto_extension(Some(std::mem::transmute(sqlite3_vec_init as *const ())));
+        }
+
         let database =
             DbManager::open_connection(&config.haiku.metadata.database_url.clone()).await?;
+
+        DbManager::check_loaded_extension(&database).await?;
+
         DbManager::create_tables(&database, config).await?;
 
         tracing::info!("Database created successfully");
@@ -24,47 +35,163 @@ impl DbManager {
     }
 
     pub async fn create_tables(database: &Connection, config: &Config) -> eyre::Result<()> {
-        // Collect all unique keys from storage_keys and retrieval_keys
         let mut all_keys: Vec<String> = Vec::new();
         for event in &config.events {
-            for key in &event.db_keys.storage_keys {
-                let mapped_key = event
-                    .keys_mapping
-                    .iter()
-                    .find(|mapping| mapping.key == *key)
-                    .map(|mapping| mapping.alias.clone())
-                    .unwrap_or_else(|| key.clone());
-                all_keys.push(mapped_key);
-            }
-            for key in &event.db_keys.retrieval_keys {
-                let mapped_key = event
-                    .keys_mapping
-                    .iter()
-                    .find(|mapping| mapping.key == *key)
-                    .map(|mapping| mapping.alias.clone())
-                    .unwrap_or_else(|| key.clone());
-                all_keys.push(mapped_key);
-            }
+            all_keys.extend(event.db_keys.storage_keys.iter().cloned());
+            all_keys.extend(event.db_keys.retrieval_keys.iter().cloned());
         }
         all_keys.sort();
         all_keys.dedup();
 
+        let create_core_tables = format!(
+            "CREATE VIRTUAL TABLE IF NOT EXISTS embedding USING vec0(vector float[{}]);
+             CREATE TABLE IF NOT EXISTS description (
+                 id INTEGER PRIMARY KEY,
+                 content TEXT NOT NULL
+             );",
+            config.haiku.db_config.vector_size
+        );
+
         database
-            .call(|conn| {
-                // Create a table for each unique key
+            .call(move |db| {
+                let transaction = db.transaction()?;
+
+                transaction.execute_batch(&create_core_tables)?;
+
                 for key in all_keys {
-                    let create_table_sql = format!(
-                        "CREATE TABLE IF NOT EXISTS {} (
-					id TEXT PRIMARY KEY,
-					value TEXT NOT NULL
-				)",
-                        key
+                    let create_key_table = format!(
+                        "CREATE TABLE IF NOT EXISTS {key} (
+                            id TEXT PRIMARY KEY,
+                            value TEXT NOT NULL
+                        )"
                     );
-                    conn.execute(&create_table_sql, [])?;
+                    transaction.execute(&create_key_table, [])?;
                 }
+
+                transaction.commit()?;
                 Ok(())
             })
             .await?;
+
+        tracing::info!("Database tables created successfully");
+        Ok(())
+    }
+
+    pub async fn insert_embedding_and_text(
+        database: &Connection,
+        text: String,
+        embedded_vector: Vec<f32>,
+        storage_keys: HashMap<String, String>,
+    ) -> eyre::Result<(i64, i64)> {
+        database
+            .call(move |db| {
+                let transaction = db.transaction()?;
+
+                // Convert Vec<f32> to Vec<u8> directly
+                let vector_bytes: Vec<u8> = embedded_vector
+                    .iter()
+                    .flat_map(|&f| f.to_le_bytes().to_vec())
+                    .collect();
+
+                transaction.execute(
+                    "INSERT INTO embedding (vector) VALUES (?)",
+                    params![vector_bytes],
+                )?;
+                let embedding_row_id = transaction.last_insert_rowid();
+
+                transaction.execute(
+                    "INSERT INTO description (content) VALUES (?)",
+                    params![text],
+                )?;
+                let description_row_id = transaction.last_insert_rowid();
+
+                assert_eq!(
+                    embedding_row_id, description_row_id,
+                    "description & embedding need to be stored at the same idx"
+                );
+
+                for (key, value) in &storage_keys {
+                    let query = format!("INSERT INTO {key} (id, value) VALUES (?, ?)");
+                    transaction.execute(&query, params![embedding_row_id.to_string(), value])?;
+                }
+
+                transaction.commit()?;
+                Ok((embedding_row_id, description_row_id))
+            })
+            .await
+            .map_err(|e| eyre::eyre!("Failed to insert embedding and description: {}", e))
+    }
+
+    pub async fn retrieve_memories(
+        database: &Connection,
+        query_embedding: Vec<f32>,
+        retrieval_keys: HashMap<String, String>,
+        limit: String,
+    ) -> eyre::Result<Vec<String>> {
+        database
+            .call(move |db| {
+                let transaction = db.transaction()?;
+                let mut memories = Vec::new();
+
+                let mut ids = Vec::new();
+                for (key, value) in &retrieval_keys {
+                    let query = format!("SELECT id FROM {key} WHERE value = ?");
+                    let mut stmt = transaction.prepare(&query)?;
+                    let rows = stmt.query_map([value], |row| row.get::<_, String>(0))?;
+
+                    for id in rows {
+                        ids.push(id?);
+                    }
+                }
+
+                let query = format!(
+                    "SELECT content 
+                        FROM description 
+                        WHERE rowid IN ({}) 
+                        ORDER BY vec_distance_cosine(
+                            (SELECT vector FROM embedding WHERE rowid = description.rowid), 
+                            ?
+                        ) ASC 
+                        LIMIT {limit}",
+                    ids.join(",")
+                );
+
+                // Convert Vec<f32> to Vec<u8> directly
+                let vector_bytes: Vec<u8> = query_embedding
+                    .iter()
+                    .flat_map(|&f| f.to_le_bytes().to_vec())
+                    .collect();
+
+                // Scope needed to drop borrowing of transaction
+                {
+                    let mut stmt = transaction.prepare(&query)?;
+                    let rows = stmt.query_map(params![vector_bytes], |row| {
+                        row.get::<_, String>(0)
+                    })?;
+
+                    for content in rows {
+                        memories.push(content?);
+                    }
+                }
+
+                transaction.commit()?;
+
+                Ok(memories)
+            })
+            .await
+            .map_err(|e| eyre::eyre!("Failed to retrieve memories: {}", e))
+    }
+
+    // Sanity check: sqlite vec extension is loaded
+    pub async fn check_loaded_extension(database: &Connection) -> eyre::Result<()> {
+        database
+            .call(|db| {
+                db.query_row("SELECT vec_version();", [], |row| row.get::<_, String>(0))
+                    .map_err(|e| e.into())
+            })
+            .await
+            .expect("Sqlite-vec extension not loaded");
+
         Ok(())
     }
 }
