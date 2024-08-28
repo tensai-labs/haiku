@@ -4,6 +4,8 @@ use core::debug::PrintTrait;
 use core::poseidon::{PoseidonTrait, HashState};
 use core::hash::HashStateTrait;
 
+use haiku_event::PromptMessage;
+
 // Inernal imports
 
 use rpg::constants;
