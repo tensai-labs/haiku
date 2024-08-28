@@ -1,7 +1,6 @@
 use rusqlite::ffi::sqlite3_auto_extension;
 use sqlite_vec::sqlite3_vec_init;
 use tokio_rusqlite::{params, Connection};
-use zerocopy::AsBytes;
 
 use std::collections::HashMap;
 
@@ -88,9 +87,15 @@ impl DbManager {
             .call(move |db| {
                 let transaction = db.transaction()?;
 
+                // Convert Vec<f32> to Vec<u8> directly
+                let vector_bytes: Vec<u8> = embedded_vector
+                    .iter()
+                    .flat_map(|&f| f.to_le_bytes().to_vec())
+                    .collect();
+
                 transaction.execute(
                     "INSERT INTO embedding (vector) VALUES (?)",
-                    params![embedded_vector.as_bytes()],
+                    params![vector_bytes],
                 )?;
                 let embedding_row_id = transaction.last_insert_rowid();
 
@@ -151,10 +156,16 @@ impl DbManager {
                     ids.join(",")
                 );
 
+                // Convert Vec<f32> to Vec<u8> directly
+                let vector_bytes: Vec<u8> = query_embedding
+                    .iter()
+                    .flat_map(|&f| f.to_le_bytes().to_vec())
+                    .collect();
+
                 // Scope needed to drop borrowing of transaction
                 {
                     let mut stmt = transaction.prepare(&query)?;
-                    let rows = stmt.query_map(params![query_embedding.as_bytes()], |row| {
+                    let rows = stmt.query_map(params![vector_bytes], |row| {
                         row.get::<_, String>(0)
                     })?;
 
