@@ -15,7 +15,7 @@ version = "1.0.0-alpha.4"
 source = "git+https://github.com/dojoengine/dojo?rev=f15def33#f15def330c0d099e79351d11c197f63e8cc1ff36"
 
 [[package]]
-name = "dojo_starter"
+name = "haiku_event"
 version = "0.1.0"
 dependencies = [
  "dojo",
