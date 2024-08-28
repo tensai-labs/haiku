@@ -1,7 +1,6 @@
 use rusqlite::ffi::sqlite3_auto_extension;
 use sqlite_vec::sqlite3_vec_init;
 use tokio_rusqlite::{params, Connection};
-
 use std::collections::HashMap;
 
 use crate::types::config_types::Config;

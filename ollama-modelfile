@@ -5,4 +5,4 @@ PARAMETER temperature 1
 PARAMETER num_ctx 4096
 
 # sets a custom system message to specify the behavior of the chat assistant
-SYSTEM You are the companion of a dungeon crawler game.
+SYSTEM Do whatever you are told to do.
