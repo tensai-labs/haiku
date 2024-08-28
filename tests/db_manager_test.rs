@@ -16,7 +16,7 @@ mod tests {
             .expect("Failed to initialize database");
 
         let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
-        let text: String = "Text sample".to_string();
+        let text: String = "Text db ops".to_string();
         let storage_keys: HashMap<String, String> = [
             ("key1".to_string(), "1".to_string()),
             ("key2".to_string(), "2".to_string()),
@@ -25,7 +25,7 @@ mod tests {
         .cloned()
         .collect();
 
-        DbManager::insert_embedding_and_text(
+        DbManager::store_memory(
             &database,
             text.clone(),
             float_vec.clone(),
@@ -39,7 +39,7 @@ mod tests {
             .iter()
             .cloned()
             .collect();
-        let retrieved_memories = DbManager::retrieve_memories(
+        let retrieved_memories = DbManager::retrieve_similar_memories(
             &database,
             vec,
             retrieval_keys,
@@ -50,7 +50,7 @@ mod tests {
 
         assert_eq!(
             retrieved_memories[0],
-            "Text sample".to_string(),
+            "Text db ops".to_string(),
             "No memories retrieved"
         );
     }
@@ -62,18 +62,18 @@ mod tests {
             .await
             .expect("Failed to initialize database");
 
-        let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
+        let float_vec: Vec<f32> = vec![0.4, 0.3, 0.2, 0.1];
 
-        let text: String = "Text sample".to_string();
+        let text: String = "Text embedding".to_string();
         let storage_keys: HashMap<String, String> = [
-            ("key1".to_string(), "1".to_string()),
-            ("key2".to_string(), "2".to_string()),
+            ("key1".to_string(), "3".to_string()),
+            ("key2".to_string(), "4".to_string()),
         ]
         .iter()
         .cloned()
         .collect();
 
-        DbManager::insert_embedding_and_text(
+        DbManager::store_memory(
             &database,
             text.clone(),
             float_vec.clone(),
@@ -82,6 +82,7 @@ mod tests {
         .await
         .expect("Failed to insert embedding and text");
 
+        
         let result: Vec<u8> = database
             .call(|db| {
                 db.query_row(
@@ -110,7 +111,7 @@ mod tests {
         // Ensure no precision is lost
         assert_eq!(
             float_vec,
-            vec![0.1, 0.2, 0.3, 0.4],
+            vec![0.4, 0.3, 0.2, 0.1],
             "Values should be identical"
         );
     }

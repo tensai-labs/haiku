@@ -1,4 +1,4 @@
-use std::{collections::HashMap, str::FromStr};
+use std::str::FromStr;
 
 use starknet_crypto::Felt;
 use tokio::sync::mpsc;
@@ -7,7 +7,9 @@ use torii_client::client::Client;
 
 use crate::{
     types::{config_types::Config, PromptMessage},
-    utils::{llm_client::LlmClient, prompt_event_message::PromptEventMessage},
+    utils::{
+        db_manager::DbManager, llm_client::LlmClient, prompt_event_message::PromptEventMessage,
+    },
 };
 
 pub struct PromptHandler {
@@ -52,44 +54,15 @@ impl PromptHandler {
             .find(|event| event.tag == prompt.event_tag)
             .ok_or(eyre::eyre!("Event not found"))?;
 
-        let retrieval_key_values = prompt.retrieval_key_values;
+        let query_embedding = self.llm_client.request_embedding(&prompt.prompt).await?;
 
-        let mut query_parts = Vec::new();
-        let mut params = Vec::new();
-
-        for (key, value) in &retrieval_key_values {
-            query_parts.push(format!("SELECT * FROM {} WHERE id = ?", key));
-            params.push(value);
-        }
-
-        let query = query_parts.join(" UNION ALL ");
-
-        let _results = self
-            .database
-            .call(move |conn| {
-                let mut stmt = conn.prepare(&query)?;
-                let params: Vec<&dyn rusqlite::ToSql> = retrieval_key_values
-                    .values()
-                    .map(|v| v as &dyn rusqlite::ToSql)
-                    .collect();
-
-                let rows = stmt.query_map(params.as_slice(), |row| {
-                    let mut row_data = HashMap::new();
-                    for i in 0..row.as_ref().column_count() {
-                        let column_name = row.as_ref().column_name(i)?;
-                        let value: String = row.get(i)?;
-                        row_data.insert(column_name.to_string(), value);
-                    }
-                    Ok(row_data)
-                })?;
-
-                let mut all_results = Vec::new();
-                for row in rows {
-                    all_results.push(row?);
-                }
-                Ok(all_results)
-            })
-            .await?;
+        DbManager::retrieve_similar_memories(
+            &self.database,
+            query_embedding,
+            prompt.retrieval_key_values,
+            self.config.haiku.db_config.vector_size.clone(),
+        )
+        .await?;
 
         let mut improved_prompt = String::from(&self.config.haiku.context.story);
         improved_prompt.push_str("An event happened in the world.");
@@ -105,7 +78,15 @@ impl PromptHandler {
             .request_chat_completion(&improved_prompt)
             .await?;
 
-        let _embedding = self.llm_client.request_embedding(&response).await?;
+        let embedding = self.llm_client.request_embedding(&response).await?;
+
+        DbManager::store_memory(
+            &self.database,
+            response,
+            embedding,
+            prompt.storage_key_values,
+        )
+        .await?;
 
         // send message to event messaging
         let event_message = PromptEventMessage::new(

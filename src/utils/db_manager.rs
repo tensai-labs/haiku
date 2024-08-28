@@ -61,10 +61,11 @@ impl DbManager {
                 for key in all_keys {
                     let create_key_table = format!(
                         "CREATE TABLE IF NOT EXISTS {key} (
-                            id TEXT PRIMARY KEY,
+                            id TEXT,
                             value TEXT NOT NULL
                         )"
                     );
+
                     transaction.execute(&create_key_table, [])?;
                 }
 
@@ -77,18 +78,18 @@ impl DbManager {
         Ok(())
     }
 
-    pub async fn insert_embedding_and_text(
+    pub async fn store_memory(
         database: &Connection,
-        text: String,
-        embedded_vector: Vec<f32>,
+        response: String,
+        embedding: Vec<f32>,
         storage_keys: HashMap<String, String>,
-    ) -> eyre::Result<(i64, i64)> {
+    ) -> eyre::Result<((i64, i64))> {
         database
             .call(move |db| {
                 let transaction = db.transaction()?;
 
                 // Convert Vec<f32> to Vec<u8> directly
-                let vector_bytes: Vec<u8> = embedded_vector
+                let vector_bytes: Vec<u8> = embedding
                     .iter()
                     .flat_map(|&f| f.to_le_bytes().to_vec())
                     .collect();
@@ -101,7 +102,7 @@ impl DbManager {
 
                 transaction.execute(
                     "INSERT INTO description (content) VALUES (?)",
-                    params![text],
+                    params![response],
                 )?;
                 let description_row_id = transaction.last_insert_rowid();
 
@@ -110,37 +111,39 @@ impl DbManager {
                     "description & embedding need to be stored at the same idx"
                 );
 
-                for (key, value) in &storage_keys {
+                for (key, id) in &storage_keys {
                     let query = format!("INSERT INTO {key} (id, value) VALUES (?, ?)");
-                    transaction.execute(&query, params![embedding_row_id.to_string(), value])?;
+                    transaction.execute(&query, params![id, embedding_row_id.to_string()])?;
                 }
 
                 transaction.commit()?;
-                Ok((embedding_row_id, description_row_id))
+                Ok((description_row_id, embedding_row_id))
             })
             .await
             .map_err(|e| eyre::eyre!("Failed to insert embedding and description: {}", e))
     }
 
-    pub async fn retrieve_memories(
+    // TODO:RENAME
+    pub async fn retrieve_similar_memories(
         database: &Connection,
         query_embedding: Vec<f32>,
         retrieval_keys: HashMap<String, String>,
         limit: String,
     ) -> eyre::Result<Vec<String>> {
         database
-            .call(move |db| {
-                let transaction = db.transaction()?;
+            // .call(move |db| {
+            .call(move |conn| {
+                let transaction = conn.transaction()?;
                 let mut memories = Vec::new();
 
-                let mut ids = Vec::new();
-                for (key, value) in &retrieval_keys {
-                    let query = format!("SELECT id FROM {key} WHERE value = ?");
+                let mut values = Vec::new();
+                for (key, id) in &retrieval_keys {
+                    let query = format!("SELECT value FROM {key} WHERE id = ?");
                     let mut stmt = transaction.prepare(&query)?;
-                    let rows = stmt.query_map([value], |row| row.get::<_, String>(0))?;
+                    let rows = stmt.query_map([id], |row| row.get::<_, String>(0))?;
 
-                    for id in rows {
-                        ids.push(id?);
+                    for value in rows {
+                        values.push(value?);
                     }
                 }
 
@@ -153,7 +156,7 @@ impl DbManager {
                             ?
                         ) ASC 
                         LIMIT {limit}",
-                    ids.join(",")
+                    values.join(",")
                 );
 
                 // Convert Vec<f32> to Vec<u8> directly
@@ -165,9 +168,8 @@ impl DbManager {
                 // Scope needed to drop borrowing of transaction
                 {
                     let mut stmt = transaction.prepare(&query)?;
-                    let rows = stmt.query_map(params![vector_bytes], |row| {
-                        row.get::<_, String>(0)
-                    })?;
+                    let rows =
+                        stmt.query_map(params![vector_bytes], |row| row.get::<_, String>(0))?;
 
                     for content in rows {
                         memories.push(content?);
