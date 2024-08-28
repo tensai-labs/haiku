@@ -12,7 +12,6 @@ use tracing_subscriber::EnvFilter;
 
 use crate::actors::{event_handler::EventHandler, prompt_handler::PromptHandler};
 
-use self::actors::config_handler::create_config;
 use self::types::config_types::Config;
 use crate::utils::db_manager::DbManager;
 

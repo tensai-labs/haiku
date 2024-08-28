@@ -113,12 +113,6 @@ mod tests {
         config.haiku.metadata.world_address =
             "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950b2".to_string();
         config.haiku.metadata.database_url = ":memory:".to_string();
-        config.haiku.metadata.signer_address =
-            "0x0101010101010101010101010101010101010101010101010101010101010101".to_string();
-        config.haiku.metadata.signer_public_key =
-            "0x0101010101010101010101010101010101010101010101010101010101010101".to_string();
-        config.haiku.metadata.signer_private_key =
-            "0x0101010101010101010101010101010101010101010101010101010101010101".to_string();
         config.haiku.llm.model = "haiku".to_string();
         config.haiku.llm.ai_url = "http://localhost:11434/api/generate".to_string();
         config.haiku.llm.vectorization_url =
