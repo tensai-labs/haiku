@@ -88,7 +88,6 @@ impl DbManager {
             .call(move |db| {
                 let transaction = db.transaction()?;
 
-                // Convert Vec<f32> to Vec<u8> directly
                 let vector_bytes: Vec<u8> = embedding
                     .iter()
                     .flat_map(|&f| f.to_le_bytes().to_vec())
@@ -123,7 +122,6 @@ impl DbManager {
             .map_err(|e| eyre::eyre!("Failed to insert embedding and description: {}", e))
     }
 
-    // TODO:RENAME
     pub async fn retrieve_similar_memories(
         database: &Connection,
         query_embedding: Vec<f32>,
@@ -131,7 +129,6 @@ impl DbManager {
         limit: String,
     ) -> eyre::Result<Vec<String>> {
         database
-            // .call(move |db| {
             .call(move |conn| {
                 let transaction = conn.transaction()?;
                 let mut memories = Vec::new();
@@ -159,7 +156,6 @@ impl DbManager {
                     values.join(",")
                 );
 
-                // Convert Vec<f32> to Vec<u8> directly
                 let vector_bytes: Vec<u8> = query_embedding
                     .iter()
                     .flat_map(|&f| f.to_le_bytes().to_vec())

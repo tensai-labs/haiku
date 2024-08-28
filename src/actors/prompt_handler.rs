@@ -70,8 +70,8 @@ impl PromptHandler {
         improved_prompt
             .push_str("For context, here are some memories of similar events related to this one");
 
-        for (index, memory) in memories.iter().enumerate() {
-            improved_prompt.push_str(&format!("\n{}. {}", index + 1, memory));
+        for (_, memory) in memories.iter().enumerate() {
+            improved_prompt.push_str(&format!("\n{}.", memory));
         }
 
         let response = self
