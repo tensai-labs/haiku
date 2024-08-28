@@ -10,6 +10,15 @@ impl Config {
         let config: Config = toml::from_str(&content)?;
         Ok(config)
     }
+
+    pub fn to_toml<P: AsRef<Path>>(
+        &self,
+        config_file_path: P,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let content = toml::to_string_pretty(self)?;
+        std::fs::write(config_file_path, content)?;
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
