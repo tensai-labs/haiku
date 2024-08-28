@@ -8,8 +8,6 @@ mod utils;
 use tokio::sync::mpsc;
 
 use starknet_crypto::Felt;
-// use tokio_rusqlite::{Connection, Result, params, Error};
-use tokio_rusqlite::params;
 use torii_client::client::Client;
 
 use torii_grpc::types::{EntityKeysClause, KeysClause};
@@ -20,52 +18,10 @@ use crate::actors::{event_handler::EventHandler, prompt_handler::PromptHandler};
 use self::types::config_types::Config;
 use crate::utils::db_manager::DbManager;
 
-use std::convert::TryInto;
-use zerocopy::AsBytes;
-
 async fn init_services(config: Config) {
     let database = DbManager::init_db(&config)
         .await
         .expect("Failed to initialize database");
-
-    // Sanity check: insert a row
-    let float_vec = vec![0.1f32, 0.1f32, 0.1f32, 0.1f32];
-    let byte_vec: Vec<u8> = float_vec
-        .iter()
-        .flat_map(|&f| f.to_le_bytes().to_vec())
-        .collect();
-
-    database
-        .call(move |db| {
-            db.execute(
-                "INSERT INTO embeddings (embedding) VALUES (?1)",
-                params![byte_vec],
-            )
-            .map_err(|e| e.into())
-        })
-        .await
-        .expect("Failed to insert row");
-
-    // sanity check: query the row
-    let queried_vectors = database
-        .call(|db| {
-            db.query_row("SELECT * FROM embeddings", [], |row| {
-                let id: i32 = row.get(0)?;
-                let embedding: Vec<u8> = row.get(1)?;
-                let float_vec: Vec<f32> = embedding
-                    .chunks_exact(4)
-                    .map(|chunk| {
-                        let arr: [u8; 4] = chunk.try_into().expect("Chunk must be 4 bytes");
-                        f32::from_le_bytes(arr)
-                    })
-                    .collect();
-                Ok(float_vec)
-            })
-            .map_err(|e| e.into())
-        })
-        .await
-        .expect("Failed to query row");
-    println!("Queried items: {:?}", queried_vectors);
 
     let client: Client = Client::new(
         config.haiku.metadata.torii_url.clone(),
