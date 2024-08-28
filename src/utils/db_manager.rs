@@ -16,8 +16,11 @@ impl DbManager {
             sqlite3_auto_extension(Some(std::mem::transmute(sqlite3_vec_init as *const ())));
         }
 
-        let database =
-            DbManager::open_connection(&config.haiku.metadata.database_url.clone()).await?;
+        #[cfg(not(test))]
+        let database = DbManager::open_connection(&config.haiku.metadata.database_url.clone()).await?;
+    
+        #[cfg(test)]
+        let database = DbManager::open_test_connection().await?;
 
         DbManager::check_loaded_extension(&database).await?;
 
@@ -32,6 +35,15 @@ impl DbManager {
         let database = Connection::open(database_url)
             .await
             .expect("Failed to open database");
+
+        Ok(database)
+    }
+
+    #[cfg(test)]
+    pub async fn open_test_connection() -> eyre::Result<Connection> {
+        let database = Connection::open_in_memory()
+            .await
+            .expect("Failed to open in-memory database");
 
         Ok(database)
     }
@@ -174,9 +186,9 @@ impl DbManager {
 
     // Sanity check: sqlite vec extension is loaded
     pub async fn check_loaded_extension(database: &Connection) -> eyre::Result<()> {
-        let version: String = database
+        database
             .call(|db| {
-                db.query_row("SELECT vec_version();", [], |row| row.get(0))
+                db.query_row("SELECT vec_version();", [], |row| row.get::<_, String>(0))
                     .map_err(|e| e.into())
             })
             .await
@@ -193,8 +205,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_db_operations() {
-        let config = Config::from_toml("./src/utils/tests/config.tests.toml")
-            .expect("Failed to load test config");
+        let config = Config::default();
         let database = DbManager::init_db(&config)
             .await
             .expect("Failed to initialize database");
@@ -205,7 +216,7 @@ mod tests {
             ("key1".to_string(), "1".to_string()),
             ("key2".to_string(), "2".to_string()),
         ]
-        .into_iter()
+        .iter()
         .cloned()
         .collect();
 
@@ -220,14 +231,14 @@ mod tests {
 
         let vec: Vec<f32> = vec![0.1, 0.1, 0.1, 0.1];
         let retrieval_keys: HashMap<String, String> = [("key1".to_string(), "1".to_string())]
-            .into_iter()
+            .iter()
             .cloned()
             .collect();
         let retrieved_memories = DbManager::retrieve_memories(
             &database,
             vec,
             retrieval_keys,
-            config.haiku.db_config.memory_retrieval_limit,
+            config.haiku.db_config.number_memory_to_retrieve,
         )
         .await
         .expect("Failed to retrieve memories");
@@ -241,21 +252,19 @@ mod tests {
 
     #[tokio::test]
     async fn test_embedding_precision() {
-        let config = Config::from_toml("./src/utils/tests/config.tests.toml")
-            .expect("Failed to load test config");
+        let config = Config::default();
         let database = DbManager::init_db(&config)
             .await
             .expect("Failed to initialize database");
 
         let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
-        let float_vec_clone = float_vec.clone();
 
         let text: String = "Text sample".to_string();
         let storage_keys: HashMap<String, String> = [
             ("key1".to_string(), "1".to_string()),
             ("key2".to_string(), "2".to_string()),
         ]
-        .into_iter()
+        .iter()
         .cloned()
         .collect();
 

@@ -20,7 +20,7 @@ vectorization_token = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 [haiku.db_config]
 vector_size = "4"
-memory_retrieval_limit = "1"
+number_memory_to_retrieve = "1"
 
 [haiku.context]
 story = """The game is a dungeon crawler."""
