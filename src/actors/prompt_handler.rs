@@ -89,12 +89,11 @@ impl PromptHandler {
         )
         .await?;
 
-        // send message to event messaging
         let event_message = PromptEventMessage::new(
             self.config.haiku.name.clone(),
             prompt.event_id,
             prompt.event_tag,
-            prompt.prompt,
+            improved_prompt,
             prompt.timestamp,
         );
 
