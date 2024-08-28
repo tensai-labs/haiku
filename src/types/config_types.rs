@@ -24,6 +24,7 @@ pub struct Haiku {
     pub metadata: Metadata,
     pub context: Context,
     pub llm: Llm,
+    pub db_config: DbConfig,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -45,6 +46,10 @@ pub struct Llm {
     pub ai_token: String,
     pub vectorization_url: String,
     pub vectorization_token: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct DbConfig {
     pub vector_size: String,
     pub memory_retrieval_limit: String,
 }

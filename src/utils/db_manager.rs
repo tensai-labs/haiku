@@ -51,7 +51,7 @@ impl DbManager {
                  id INTEGER PRIMARY KEY,
                  content TEXT NOT NULL
              );",
-            config.haiku.metadata.vector_size
+            config.haiku.db_config.vector_size
         );
 
         database
@@ -227,7 +227,7 @@ mod tests {
             &database,
             vec,
             retrieval_keys,
-            config.haiku.metadata.memory_retrieval_limit,
+            config.haiku.db_config.memory_retrieval_limit,
         )
         .await
         .expect("Failed to retrieve memories");
