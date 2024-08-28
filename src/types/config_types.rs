@@ -34,7 +34,6 @@ pub struct Metadata {
     pub database_url: String,
     pub world_address: String,
     pub signer_address: String,
-    pub signer_public_key: String,
     pub signer_private_key: String,
 }
 

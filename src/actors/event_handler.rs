@@ -30,7 +30,7 @@ impl EventHandler {
 
     pub async fn handle_event(&self, entity: Entity) -> eyre::Result<()> {
         if entity.models.len() == 0 {
-            return Ok(());
+            return Err(eyre!("Empty models for event or first event received"));
         }
 
         let model_name = entity.models[0].name.clone();

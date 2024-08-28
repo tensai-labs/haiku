@@ -20,13 +20,11 @@ toml = "0.7"
 starknet = "0.11.0"
 starknet-crypto = "0.7.0"
 starknet-types-core = "~0.1.4"
-dojo-types = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
-torii-client = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
-torii-grpc = { git = "https://github.com/dojoengine/dojo", features = [
-    "client",
-], tag = "v1.0.0-alpha.6" }
-torii-relay = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
-dojo-world = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
+dojo-types = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
+torii-client = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
+torii-grpc = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
+torii-relay = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
+dojo-world = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
 serde_json = "1.0"
 
 cainome = { git = "https://github.com/cartridge-gg/cainome" }

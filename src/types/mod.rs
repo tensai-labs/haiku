@@ -8,6 +8,6 @@ pub struct PromptMessage {
     pub event_tag: String,
     pub prompt: String,
     pub retrieval_key_values: HashMap<String, String>,
-	pub storage_key_values: HashMap<String, String>,
+    pub storage_key_values: HashMap<String, String>,
     pub timestamp: u64,
 }

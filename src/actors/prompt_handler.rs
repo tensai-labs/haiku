@@ -36,7 +36,7 @@ impl PromptHandler {
 
     pub async fn run(&mut self) {
         while let Some(prompt) = self.prompt_receiver.recv().await {
- 			tracing::debug!("Handling prompt");
+            tracing::debug!("Handling prompt");
             let ret = self.handle_prompt(prompt).await;
             if ret.is_err() {
                 tracing::error!("Error handling prompt: {:?}", ret.unwrap_err());

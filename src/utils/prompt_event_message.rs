@@ -10,6 +10,8 @@ use dojo_types::{
     schema::{Member, Struct, Ty},
 };
 
+use crate::utils::constants::{HAIKU_EVENTS_NAME, HAIKU_NAMESPACE};
+
 #[derive(Debug)]
 pub struct PromptEventMessage {
     pub project_name: String,
@@ -38,8 +40,13 @@ impl PromptEventMessage {
 
     pub fn to_message(&self, account: Felt, pk: &Felt) -> eyre::Result<Message> {
         let model = Ty::Struct(Struct {
-            name: "PromptEventMessage".to_string(),
+            name: format!("{}-{}", HAIKU_NAMESPACE, HAIKU_EVENTS_NAME).to_string(),
             children: vec![
+                Member {
+                    name: "identity".to_string(),
+                    ty: Ty::Primitive(Primitive::ContractAddress(Some(account))),
+                    key: true,
+                },
                 Member {
                     name: "event_id".to_string(),
                     ty: Ty::Primitive(Primitive::U32(Some(self.event_id))),
@@ -65,6 +72,7 @@ impl PromptEventMessage {
 
         let domain = Domain::new(&self.project_name, "1", "1", Some("1"));
         let typed_data = TypedData::from_model(model, domain)?;
+
         let hash = typed_data.encode(account)?;
 
         let signature = sign(pk, &hash, &Felt::from_str("0x1222111")?)
