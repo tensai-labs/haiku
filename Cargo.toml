@@ -28,7 +28,6 @@ torii-grpc = { git = "https://github.com/dojoengine/dojo", features = [
 torii-relay = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
 dojo-world = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.6" }
 serde_json = "1.0"
-config = "0.13.1"
 
 cainome = { git = "https://github.com/cartridge-gg/cainome" }
 cairo-lang-filesystem = "=2.7.0"

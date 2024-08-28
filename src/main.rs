@@ -63,6 +63,8 @@ async fn init_services(config: Config) {
 async fn main() {
     tracing_subscriber::fmt()
         .with_env_filter(EnvFilter::new("haiku=trace"))
+        .with_file(true)
+        .with_line_number(true)
         .init();
 
     let args: Vec<String> = std::env::args().collect();

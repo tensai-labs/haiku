@@ -1,51 +1,39 @@
-use config::Config;
 use eyre::eyre;
 use reqwest::Client;
 use serde_json::Value;
 
+use crate::types::config_types::Config;
+
 pub struct LlmClient {
     client: Client,
-    vectorization_url: String,
-    vectorization_token: String,
-    ai_url: String,
-    ai_token: String,
+    config: Config,
 }
 
 impl LlmClient {
-    pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        let config = Config::builder()
-            .add_source(config::File::with_name("config"))
-            .build()?;
-
+    pub fn new(config: Config) -> Result<Self, Box<dyn std::error::Error>> {
         Ok(Self {
             client: Client::new(),
-            vectorization_url: config.get("haiku.metadata.vectorization_url")?,
-            vectorization_token: config.get("haiku.metadata.vectorization_token")?,
-            ai_url: config.get("haiku.metadata.ai_url")?,
-            ai_token: config.get("haiku.metadata.ai_token")?,
+            config: config.clone(),
         })
     }
 
     pub async fn request_chat_completion(&self, text: &str) -> eyre::Result<String> {
         let response = self
             .client
-            .post(&self.ai_url)
+            .post(&self.config.haiku.llm.ai_url)
             .header("Content-Type", "application/json")
             .json(&serde_json::json!({
-                "model": "my-dolphin",
+                "model": self.config.haiku.llm.model,
                 "prompt": text,
                 "stream": false
             }))
             .send()
             .await?;
-        tracing::info!("test");
         if !response.status().is_success() {
             return Err(eyre!(format!("API request failed: {}", response.status())));
         }
-        tracing::info!("1");
 
         let json: Value = response.json().await?;
-        tracing::info!("2");
 
         let response_text = json["response"]
             .as_str()
@@ -53,21 +41,17 @@ impl LlmClient {
                 "Invalid JSON structure: 'response' field not found or not a string"
             ))?
             .to_string();
-        tracing::info!("3");
 
         Ok(response_text)
     }
 
-    pub async fn request_embedding(
-        &self,
-        text: &str,
-    ) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
+    pub async fn request_embedding(&self, text: &str) -> eyre::Result<Vec<f32>> {
         let response = self
             .client
-            .post(&self.vectorization_url)
+            .post(&self.config.haiku.llm.vectorization_url)
             .header(
                 "Authorization",
-                format!("Bearer {}", self.vectorization_token),
+                format!("Bearer {}", self.config.haiku.llm.vectorization_token),
             )
             .header("Content-Type", "application/json")
             .json(&serde_json::json!({ "inputs": text }))
@@ -75,14 +59,14 @@ impl LlmClient {
             .await?;
 
         if !response.status().is_success() {
-            return Err(format!("API request failed: {}", response.status()).into());
+            return Err(eyre!(format!("API request failed: {}", response.status())));
         }
 
         let json: Value = response.json().await?;
 
         let embedding: Vec<f32> = json
             .as_array()
-            .ok_or("Invalid JSON structure")?
+            .ok_or(eyre!("Invalid JSON structure"))?
             .iter()
             .filter_map(|v| v.as_f64().map(|f| f as f32))
             .collect();

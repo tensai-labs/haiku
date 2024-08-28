@@ -1,7 +1,6 @@
-use std::{collections::HashMap, convert::TryInto};
-
 use crate::types::{config_types::Config, PromptMessage};
 use dojo_types::{primitive::Primitive, schema::Ty};
+use eyre::eyre;
 use serenity::futures::StreamExt;
 use tokio::sync::mpsc;
 use torii_grpc::{client::EntityUpdateStreaming, types::schema::Entity};
@@ -21,7 +20,11 @@ impl EventHandler {
 
     pub async fn run(&self, mut rcv: EntityUpdateStreaming) {
         while let Some(Ok((_, entity))) = rcv.next().await {
-            self.handle_event(entity).await;
+            tracing::debug!("Received event");
+            let ret = self.handle_event(entity).await;
+            if ret.is_err() {
+                tracing::error!("Error handling event: {:?}", ret.unwrap_err());
+            }
         }
     }
 
@@ -29,8 +32,6 @@ impl EventHandler {
         if entity.models.len() == 0 {
             return Ok(());
         }
-
-        let mut retrieval_key_values = HashMap::new();
 
         let model_name = entity.models[0].name.clone();
         let event_config = self
@@ -72,16 +73,36 @@ impl EventHandler {
                     .as_primitive()
                     .expect("Expected a primitive")
                     .clone();
-                tracing::info!("primitive: {:?}", primitive);
                 let felts = primitive
                     .serialize()
                     .expect("Failed to deserialize primitive");
 
-                tracing::info!("felts {:?}", felts);
-                retrieval_key_values.insert(child.name.clone(), felts[0].to_hex_string());
+                prompt_message
+                    .retrieval_key_values
+                    .insert(child.name.clone(), felts[0].to_hex_string());
+            }
+            if event_config.db_keys.storage_keys.contains(&child.name) {
+                let primitive = child
+                    .ty
+                    .as_primitive()
+                    .expect("Expected a primitive")
+                    .clone();
+                let felts = primitive
+                    .serialize()
+                    .expect("Failed to deserialize primitive");
+
+                prompt_message
+                    .storage_key_values
+                    .insert(child.name.clone(), felts[0].to_hex_string());
             }
         });
 
+        prompt_message.prompt = finished_string;
+        prompt_message.event_tag = event_config.tag.clone();
+
+        if prompt_message.timestamp == 0 {
+            return Err(eyre!("event received doesn't have a timestamp"));
+        }
         self.prompt_sender.send(prompt_message).await?;
 
         Ok(())

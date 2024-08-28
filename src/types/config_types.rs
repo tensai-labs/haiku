@@ -23,6 +23,7 @@ pub struct Haiku {
     pub name: String,
     pub metadata: Metadata,
     pub context: Context,
+    pub llm: Llm,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -30,11 +31,20 @@ pub struct Metadata {
     pub torii_url: String,
     pub rpc_url: String,
     pub relay_url: String,
-    pub ai_url: String,
-    pub vectorization_url: String,
     pub database_url: String,
     pub world_address: String,
-    pub private_key: String,
+    pub signer_address: String,
+    pub signer_public_key: String,
+    pub signer_private_key: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Llm {
+    pub model: String,
+    pub ai_url: String,
+    pub ai_token: String,
+    pub vectorization_url: String,
+    pub vectorization_token: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
