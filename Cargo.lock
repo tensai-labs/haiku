@@ -3999,6 +3999,7 @@ version = "0.1.0"
 dependencies = [
  "cainome 0.2.3 (git+https://github.com/cartridge-gg/cainome)",
  "cairo-lang-filesystem",
+ "camino",
  "config",
  "dojo-types",
  "dojo-world",

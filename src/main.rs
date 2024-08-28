@@ -11,6 +11,7 @@ use torii_grpc::types::{EntityKeysClause, KeysClause};
 
 use crate::actors::{event_handler::EventHandler, prompt_handler::PromptHandler};
 
+use self::actors::config_handler::create_config;
 use self::types::config_types::Config;
 
 async fn init_services(config: Config) {
