@@ -11,7 +11,7 @@ migrate = "sozo build && sozo migrate apply"
 
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.8" }
-haiku_event = { git = "https://github.com/edisontim/haiku", rev = "cc7c9731102f48964eb9213e0d29caef33f3a06b"}
+haiku_event = { git = "https://github.com/edisontim/haiku" }
 
 [[target.dojo]]
 build-external-contracts = [ "haiku_event::PromptMessage" ]
