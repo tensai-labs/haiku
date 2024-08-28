@@ -11,5 +11,6 @@ migrate = "sozo build && sozo migrate apply"
 
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.7" }
+haiku_event = { git = "https://github.com/edisontim/haiku"}
 
 [[target.dojo]]
