@@ -9,6 +9,7 @@ dotenv = "0.15"
 tracing = { version = "0.1", default-features = false, features = ["attributes"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+clap = { version = "4.5.16", features = ["derive"] }
 serde = { version = "1.0.197", default-features = false, features = ["derive"] }
 dotenvy = { version = "0.15.7", default-features = false }
 envy = { version = "0.4.2", default-features = false }
