@@ -45,6 +45,8 @@ pub struct Llm {
     pub ai_token: String,
     pub vectorization_url: String,
     pub vectorization_token: String,
+    pub vector_size: String,
+    pub memory_retrieval_limit: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

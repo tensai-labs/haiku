@@ -1,6 +1,3 @@
-// Mute unused warnings
-// #![allow(unused)]
-
 mod actors;
 mod types;
 mod utils;

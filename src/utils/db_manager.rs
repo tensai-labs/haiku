@@ -19,11 +19,9 @@ impl DbManager {
         let database =
             DbManager::open_connection(&config.haiku.metadata.database_url.clone()).await?;
 
-        // Sanity check
-        DbManager::sqlite_vec_version(&database).await?;
+        DbManager::check_loaded_extension(&database).await?;
 
-        DbManager::create_primary_tables(&database).await?;
-        DbManager::create_key_tables(&database, config).await?;
+        DbManager::create_tables(&database, config).await?;
 
         tracing::info!("Database created successfully");
 
@@ -38,75 +36,49 @@ impl DbManager {
         Ok(database)
     }
 
-    // To do: Add dynamic vector size to embeddings table
-    // To do: Better table names
-    pub async fn create_primary_tables(database: &Connection) -> eyre::Result<()> {
-        database
-            .call(|db| {
-                db.execute_batch(
-                    "CREATE VIRTUAL TABLE IF NOT EXISTS embeddings USING vec0(embedding float[4]);
-                 CREATE TABLE IF NOT EXISTS text_table (
-                     id INTEGER PRIMARY KEY,
-                     description TEXT NOT NULL
-                 );",
-                )
-                .map_err(|e| e.into())
-            })
-            .await
-            .expect("Failed to create primary tables");
-
-        Ok(())
-    }
-
-    pub async fn create_key_tables(database: &Connection, config: &Config) -> eyre::Result<()> {
-        // Collect all unique keys from storage_keys and retrieval_keys
+    pub async fn create_tables(database: &Connection, config: &Config) -> eyre::Result<()> {
         let mut all_keys: Vec<String> = Vec::new();
         for event in &config.events {
-            for key in &event.db_keys.storage_keys {
-                let mapped_key = event
-                    .keys_mapping
-                    .iter()
-                    .find(|mapping| mapping.key == *key)
-                    .map(|mapping| mapping.alias.clone())
-                    .unwrap_or_else(|| key.clone());
-                all_keys.push(mapped_key);
-            }
-            for key in &event.db_keys.retrieval_keys {
-                let mapped_key = event
-                    .keys_mapping
-                    .iter()
-                    .find(|mapping| mapping.key == *key)
-                    .map(|mapping| mapping.alias.clone())
-                    .unwrap_or_else(|| key.clone());
-                all_keys.push(mapped_key);
-            }
+            all_keys.extend(event.db_keys.storage_keys.iter().cloned());
+            all_keys.extend(event.db_keys.retrieval_keys.iter().cloned());
         }
         all_keys.sort();
         all_keys.dedup();
 
+        let create_core_tables = format!(
+            "CREATE VIRTUAL TABLE IF NOT EXISTS embedding USING vec0(vector float[{}]);
+             CREATE TABLE IF NOT EXISTS description (
+                 id INTEGER PRIMARY KEY,
+                 content TEXT NOT NULL
+             );",
+            config.haiku.metadata.vector_size
+        );
+
         database
-            .call(|conn| {
-                // Create a table for each unique key
-                // id: idx in embeddings/nlp tables of row
-                // value: identifier passed as value by event
+            .call(move |db| {
+                let transaction = db.transaction()?;
+
+                transaction.execute_batch(&create_core_tables)?;
+
                 for key in all_keys {
-                    let create_table_sql = format!(
-                        "CREATE TABLE IF NOT EXISTS {} (
-					id TEXT PRIMARY KEY,
-					value TEXT NOT NULL
-				)",
-                        key
+                    let create_key_table = format!(
+                        "CREATE TABLE IF NOT EXISTS {key} (
+                            id TEXT PRIMARY KEY,
+                            value TEXT NOT NULL
+                        )"
                     );
-                    conn.execute(&create_table_sql, [])?;
+                    transaction.execute(&create_key_table, [])?;
                 }
+
+                transaction.commit()?;
                 Ok(())
             })
             .await?;
+
+        tracing::info!("Database tables created successfully");
         Ok(())
     }
 
-    // To do: Better fn name
-    // To do: String vs &str ??
     pub async fn insert_embedding_and_text(
         database: &Connection,
         text: String,
@@ -118,51 +90,48 @@ impl DbManager {
                 let transaction = db.transaction()?;
 
                 transaction.execute(
-                    "INSERT INTO embeddings (embedding) VALUES (?)",
+                    "INSERT INTO embedding (vector) VALUES (?)",
                     params![embedded_vector.as_bytes()],
                 )?;
                 let embedding_row_id = transaction.last_insert_rowid();
-                println!("Inserting embedding");
 
                 transaction.execute(
-                    "INSERT INTO text_table (description) VALUES (?)",
+                    "INSERT INTO description (content) VALUES (?)",
                     params![text],
                 )?;
-                let text_row_id = transaction.last_insert_rowid();
-                println!("Inserting text description");
+                let description_row_id = transaction.last_insert_rowid();
 
                 assert_eq!(
-                    embedding_row_id, text_row_id,
-                    "nlp & embedded vector needs to be stored at the same idx"
+                    embedding_row_id, description_row_id,
+                    "description & embedding need to be stored at the same idx"
                 );
 
                 for (key, value) in &storage_keys {
-                    let query = format!("INSERT INTO {} (id, value) VALUES (?, ?)", key);
-                    transaction.execute(&query, params![text_row_id.to_string(), value])?;
-                    println!("inserting {value} for {key} table");
+                    let query = format!("INSERT INTO {key} (id, value) VALUES (?, ?)");
+                    transaction.execute(&query, params![embedding_row_id.to_string(), value])?;
                 }
 
                 transaction.commit()?;
-                Ok((embedding_row_id, text_row_id))
+                Ok((embedding_row_id, description_row_id))
             })
             .await
-            .map_err(|e| eyre::eyre!("Failed to insert embedding and text: {}", e))
+            .map_err(|e| eyre::eyre!("Failed to insert embedding and description: {}", e))
     }
 
-    // To do: Add dyn. limit
     pub async fn retrieve_memories(
         database: &Connection,
         query_embedding: Vec<f32>,
         retrieval_keys: HashMap<String, String>,
+        limit: String,
     ) -> eyre::Result<Vec<String>> {
         database
             .call(move |db| {
                 let transaction = db.transaction()?;
-                let mut results = Vec::new();
+                let mut memories = Vec::new();
 
                 let mut ids = Vec::new();
                 for (key, value) in &retrieval_keys {
-                    let query = format!("SELECT id FROM {} WHERE value = ?", key);
+                    let query = format!("SELECT id FROM {key} WHERE value = ?");
                     let mut stmt = transaction.prepare(&query)?;
                     let rows = stmt.query_map([value], |row| row.get::<_, String>(0))?;
 
@@ -172,14 +141,14 @@ impl DbManager {
                 }
 
                 let query = format!(
-                    "SELECT description 
-                        FROM text_table 
+                    "SELECT content 
+                        FROM description 
                         WHERE rowid IN ({}) 
                         ORDER BY vec_distance_cosine(
-                            (SELECT embedding FROM embeddings WHERE rowid = text_table.rowid), 
+                            (SELECT vector FROM embedding WHERE rowid = description.rowid), 
                             ?
                         ) ASC 
-                        LIMIT 1",
+                        LIMIT {limit}",
                     ids.join(",")
                 );
 
@@ -190,31 +159,28 @@ impl DbManager {
                         row.get::<_, String>(0)
                     })?;
 
-                    for description in rows {
-                        results.push(description?);
+                    for content in rows {
+                        memories.push(content?);
                     }
                 }
 
                 transaction.commit()?;
 
-                println!("Memories retrieved: {:#?}", results);
-                Ok(results)
+                Ok(memories)
             })
             .await
             .map_err(|e| eyre::eyre!("Failed to retrieve memories: {}", e))
     }
 
     // Sanity check: sqlite vec extension is loaded
-    pub async fn sqlite_vec_version(database: &Connection) -> eyre::Result<()> {
+    pub async fn check_loaded_extension(database: &Connection) -> eyre::Result<()> {
         let version: String = database
             .call(|db| {
                 db.query_row("SELECT vec_version();", [], |row| row.get(0))
                     .map_err(|e| e.into())
             })
             .await
-            .expect("Failed to get vec version");
-
-        println!("Vec version: {}", version);
+            .expect("Sqlite-vec extension not loaded");
 
         Ok(())
     }
@@ -227,7 +193,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_db_operations() {
-        let config = Config::from_toml("./config.tests.toml").expect("Failed to load test config");
+        let config = Config::from_toml("./src/utils/tests/config.tests.toml").expect("Failed to load test config");
         let database = DbManager::init_db(&config)
             .await
             .expect("Failed to initialize database");
@@ -256,7 +222,7 @@ mod tests {
             .into_iter()
             .cloned()
             .collect();
-        let retrieved_memories = DbManager::retrieve_memories(&database, vec, retrieval_keys)
+        let retrieved_memories = DbManager::retrieve_memories(&database, vec, retrieval_keys, config.haiku.metadata.memory_retrieval_limit)
             .await
             .expect("Failed to retrieve memories");
 
@@ -269,15 +235,14 @@ mod tests {
 
     #[tokio::test]
     async fn test_embedding_precision() {
-        let config = Config::from_toml("./config.tests.toml").expect("Failed to load test config");
+        let config = Config::from_toml("./src/utils/tests/config.tests.toml").expect("Failed to load test config");
         let database = DbManager::init_db(&config)
             .await
             .expect("Failed to initialize database");
 
         let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
-        // Cloned to be able to assert at the bottom of the fn
         let float_vec_clone = float_vec.clone();
-        
+
         let text: String = "Text sample".to_string();
         let storage_keys: HashMap<String, String> = [
             ("key1".to_string(), "1".to_string()),
@@ -301,8 +266,8 @@ mod tests {
                 db.query_row(
                     "
                 SELECT
-                    embedding
-                FROM embeddings
+                    vector
+                FROM embedding
                 ",
                     [],
                     |row| row.get(0),
