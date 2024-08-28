@@ -4,7 +4,6 @@ mod types;
 mod utils;
 
 use tracing_subscriber::EnvFilter;
-
 use clap::Parser;
 
 use crate::subcommands::{Args, Subcommands};

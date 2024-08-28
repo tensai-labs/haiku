@@ -72,7 +72,6 @@ impl PromptEventMessage {
 
         let domain = Domain::new(&self.project_name, "1", "1", Some("1"));
         let typed_data = TypedData::from_model(model, domain)?;
-
         let hash = typed_data.encode(account)?;
 
         let signature = sign(pk, &hash, &Felt::from_str("0x1222111")?)

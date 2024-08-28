@@ -16,7 +16,7 @@ mod tests {
             .expect("Failed to initialize database");
 
         let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
-        let text: String = "Text sample".to_string();
+        let text: String = "Text db ops".to_string();
         let storage_keys: HashMap<String, String> = [
             ("key1".to_string(), "1".to_string()),
             ("key2".to_string(), "2".to_string()),
@@ -25,21 +25,16 @@ mod tests {
         .cloned()
         .collect();
 
-        DbManager::insert_embedding_and_text(
-            &database,
-            text.clone(),
-            float_vec.clone(),
-            storage_keys,
-        )
-        .await
-        .expect("Failed to insert embedding and text");
+        DbManager::store_memory(&database, text.clone(), float_vec.clone(), storage_keys)
+            .await
+            .expect("Failed to insert embedding and text");
 
         let vec: Vec<f32> = vec![0.1, 0.1, 0.1, 0.1];
         let retrieval_keys: HashMap<String, String> = [("key1".to_string(), "1".to_string())]
             .iter()
             .cloned()
             .collect();
-        let retrieved_memories = DbManager::retrieve_memories(
+        let retrieved_memories = DbManager::retrieve_similar_memories(
             &database,
             vec,
             retrieval_keys,
@@ -50,7 +45,7 @@ mod tests {
 
         assert_eq!(
             retrieved_memories[0],
-            "Text sample".to_string(),
+            "Text db ops".to_string(),
             "No memories retrieved"
         );
     }
@@ -62,25 +57,20 @@ mod tests {
             .await
             .expect("Failed to initialize database");
 
-        let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
+        let float_vec: Vec<f32> = vec![0.4, 0.3, 0.2, 0.1];
 
-        let text: String = "Text sample".to_string();
+        let text: String = "Text embedding".to_string();
         let storage_keys: HashMap<String, String> = [
-            ("key1".to_string(), "1".to_string()),
-            ("key2".to_string(), "2".to_string()),
+            ("key1".to_string(), "3".to_string()),
+            ("key2".to_string(), "4".to_string()),
         ]
         .iter()
         .cloned()
         .collect();
 
-        DbManager::insert_embedding_and_text(
-            &database,
-            text.clone(),
-            float_vec.clone(),
-            storage_keys,
-        )
-        .await
-        .expect("Failed to insert embedding and text");
+        DbManager::store_memory(&database, text.clone(), float_vec.clone(), storage_keys)
+            .await
+            .expect("Failed to insert embedding and text");
 
         let result: Vec<u8> = database
             .call(|db| {
@@ -110,7 +100,7 @@ mod tests {
         // Ensure no precision is lost
         assert_eq!(
             float_vec,
-            vec![0.1, 0.2, 0.3, 0.4],
+            vec![0.4, 0.3, 0.2, 0.1],
             "Values should be identical"
         );
     }
@@ -123,12 +113,6 @@ mod tests {
         config.haiku.metadata.world_address =
             "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950b2".to_string();
         config.haiku.metadata.database_url = ":memory:".to_string();
-        config.haiku.metadata.signer_address =
-            "0x0101010101010101010101010101010101010101010101010101010101010101".to_string();
-        config.haiku.metadata.signer_public_key =
-            "0x0101010101010101010101010101010101010101010101010101010101010101".to_string();
-        config.haiku.metadata.signer_private_key =
-            "0x0101010101010101010101010101010101010101010101010101010101010101".to_string();
         config.haiku.llm.model = "haiku".to_string();
         config.haiku.llm.ai_url = "http://localhost:11434/api/generate".to_string();
         config.haiku.llm.vectorization_url =
