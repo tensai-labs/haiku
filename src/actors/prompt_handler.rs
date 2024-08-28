@@ -70,9 +70,9 @@ impl PromptHandler {
         improved_prompt
             .push_str("For context, here are some memories of similar events related to this one");
 
-        // Enter the results from the cosine similarity here
-        // memories
-        improved_prompt.push_str("");
+        for (index, memory) in memories.iter().enumerate() {
+            improved_prompt.push_str(&format!("\n{}. {}", index + 1, memory));
+        }
 
         let response = self
             .llm_client
