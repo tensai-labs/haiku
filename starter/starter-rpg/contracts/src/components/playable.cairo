@@ -39,6 +39,89 @@ mod PlayableComponent {
     #[derive(Drop, starknet::Event)]
     enum Event {}
 
+    // Haiku Events
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    #[dojo::model(namespace: "haiku", nomapping: true)]
+    struct SpawnEvent {
+        #[key]
+        player_id: felt252,
+        #[key]
+        id: u32,
+        timestamp: u64,
+        player_role: u8,
+        player_mode: u8,
+        player_health: u8,
+        player_gold: u16,
+        player_score: u16,
+        player_name: felt252,
+    }
+
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    #[dojo::model(namespace: "haiku", nomapping: true)]
+    struct MoveEvent {
+        #[key]
+        player_id: felt252,
+        #[key]
+        id: u32,
+        timestamp: u64,
+        direction: u8,
+        player_role: u8,
+        player_mode: u8,
+        player_health: u8,
+        player_gold: u16,
+        player_score: u16,
+        player_name: felt252,
+        new_dungeon_monster: u8,
+        new_dungeon_role: u8,
+        new_dungeon_damage: u8,
+        new_dungeon_health: u8,
+        new_dungeon_reward: u16,
+    }
+
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    #[dojo::model(namespace: "haiku", nomapping: true)]
+    struct AttackEvent {
+        #[key]
+        player_id: felt252,
+        #[key]
+        id: u32,
+        timestamp: u64,
+        player_role: u8,
+        player_mode: u8,
+        player_health: u8,
+        player_gold: u16,
+        player_score: u16,
+        player_name: felt252,
+        dungeon_monster: u8,
+        dungeon_role: u8,
+        dungeon_damage: u8,
+        dungeon_health: u8,
+        dungeon_reward: u16,
+        has_defeated_dungeon: bool,
+    }
+
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    #[dojo::model(namespace: "haiku", nomapping: true)]
+    struct HealEvent {
+        #[key]
+        player_id: felt252,
+        #[key]
+        id: u32,
+        timestamp: u64,
+        player_role: u8,
+        player_mode: u8,
+        player_health: u8,
+        player_gold: u16,
+        player_score: u16,
+        player_name: felt252,
+        quantity: u8,
+    }
+
+
     #[generate_trait]
     impl InternalImpl<
         TContractState, +HasComponent<TContractState>
@@ -63,6 +146,21 @@ mod PlayableComponent {
 
             // [Effect] Set player
             store.set_player(player);
+
+            emit!(
+                world,
+                SpawnEvent {
+                    player_id,
+                    id: world.uuid(),
+                    timestamp: time,
+                    player_name: player.name,
+                    player_role: player.role,
+                    player_mode: player.mode,
+                    player_health: player.health,
+                    player_gold: player.gold,
+                    player_score: player.score
+                }
+            );
         }
 
         fn move(self: @ComponentState<TContractState>, world: IWorldDispatcher, direction: u8) {
@@ -83,6 +181,27 @@ mod PlayableComponent {
 
             // [Effect] Update state
             store.set_state(player, new_dungeon);
+
+            emit!(
+                world,
+                MoveEvent {
+                    player_id,
+                    id: world.uuid(),
+                    timestamp: get_block_timestamp(),
+                    direction,
+                    player_role: player.role,
+                    player_mode: player.mode,
+                    player_health: player.health,
+                    player_gold: player.gold,
+                    player_score: player.score,
+                    player_name: player.name,
+                    new_dungeon_monster: new_dungeon.monster,
+                    new_dungeon_role: new_dungeon.role,
+                    new_dungeon_damage: new_dungeon.damage,
+                    new_dungeon_health: new_dungeon.health,
+                    new_dungeon_reward: new_dungeon.reward
+                }
+            );
         }
 
         fn attack(self: @ComponentState<TContractState>, world: IWorldDispatcher) {
@@ -109,6 +228,27 @@ mod PlayableComponent {
 
             // [Effect] Update state
             store.set_state(player, dungeon);
+
+            emit!(
+                world,
+                AttackEvent {
+                    player_id,
+                    id: world.uuid(),
+                    timestamp: get_block_timestamp(),
+                    player_role: player.role,
+                    player_mode: player.mode,
+                    player_health: player.health,
+                    player_gold: player.gold,
+                    player_score: player.score,
+                    player_name: player.name,
+                    dungeon_monster: dungeon.monster,
+                    dungeon_role: dungeon.role,
+                    dungeon_damage: dungeon.damage,
+                    dungeon_health: dungeon.health,
+                    dungeon_reward: dungeon.reward,
+                    has_defeated_dungeon: dungeon.is_done()
+                }
+            );
         }
 
         fn heal(self: @ComponentState<TContractState>, world: IWorldDispatcher, quantity: u8) {
@@ -128,6 +268,22 @@ mod PlayableComponent {
 
             // [Effect] Update state
             store.set_player(player);
+
+            emit!(
+                world,
+                HealEvent {
+                    player_id,
+                    id: world.uuid(),
+                    timestamp: get_block_timestamp(),
+                    player_role: player.role,
+                    player_mode: player.mode,
+                    player_health: player.health,
+                    player_gold: player.gold,
+                    player_score: player.score,
+                    player_name: player.name,
+                    quantity
+                }
+            );
         }
     }
 }

@@ -1,0 +1,52 @@
+kind = "DojoModel"
+class_hash = "0x72e2f8b7ff645d6eb887cc8d1842bd4abb7efe2eac319e40f313cf8b0349793"
+original_class_hash = "0x72e2f8b7ff645d6eb887cc8d1842bd4abb7efe2eac319e40f313cf8b0349793"
+abi = "manifests/dev/base/abis/models/haiku-SpawnEvent-aa8d3a37.json"
+tag = "haiku-SpawnEvent"
+qualified_path = "rpg::components::playable::PlayableComponent::spawn_event"
+manifest_name = "haiku-SpawnEvent-aa8d3a37"
+
+[[members]]
+name = "player_id"
+type = "felt252"
+key = true
+
+[[members]]
+name = "id"
+type = "u32"
+key = true
+
+[[members]]
+name = "timestamp"
+type = "u64"
+key = false
+
+[[members]]
+name = "player_role"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_mode"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_health"
+type = "u8"
+key = false
+
+[[members]]
+name = "player_gold"
+type = "u16"
+key = false
+
+[[members]]
+name = "player_score"
+type = "u16"
+key = false
+
+[[members]]
+name = "player_name"
+type = "felt252"
+key = false
