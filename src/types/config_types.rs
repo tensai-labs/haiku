@@ -21,37 +21,53 @@ impl Config {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Config {
     pub haiku: Haiku,
     pub events: Vec<Event>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Haiku {
     pub name: String,
     pub metadata: Metadata,
     pub context: Context,
+    pub llm: Llm,
+    pub db_config: DbConfig,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Metadata {
     pub torii_url: String,
     pub rpc_url: String,
     pub relay_url: String,
-    pub ai_url: String,
-    pub vectorization_url: String,
     pub database_url: String,
     pub world_address: String,
-    pub private_key: String,
+    pub signer_address: String,
+    pub signer_private_key: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+pub struct Llm {
+    pub model: String,
+    pub ai_url: String,
+    pub ai_token: String,
+    pub vectorization_url: String,
+    pub vectorization_token: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+pub struct DbConfig {
+    pub vector_size: String,
+    pub number_memory_to_retrieve: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Context {
     pub story: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Event {
     pub tag: String,
     pub prompt: FieldsContext,
@@ -59,18 +75,18 @@ pub struct Event {
     pub keys_mapping: Vec<KeysMapping>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct FieldsContext {
     pub template: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct DbKeys {
     pub storage_keys: Vec<String>,
     pub retrieval_keys: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct KeysMapping {
     pub key: String,
     pub alias: String,
