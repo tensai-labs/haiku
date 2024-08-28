@@ -83,7 +83,7 @@ impl DbManager {
         response: String,
         embedding: Vec<f32>,
         storage_keys: HashMap<String, String>,
-    ) -> eyre::Result<((i64, i64))> {
+    ) -> eyre::Result<(i64, i64)> {
         database
             .call(move |db| {
                 let transaction = db.transaction()?;

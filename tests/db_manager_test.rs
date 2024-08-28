@@ -25,14 +25,9 @@ mod tests {
         .cloned()
         .collect();
 
-        DbManager::store_memory(
-            &database,
-            text.clone(),
-            float_vec.clone(),
-            storage_keys,
-        )
-        .await
-        .expect("Failed to insert embedding and text");
+        DbManager::store_memory(&database, text.clone(), float_vec.clone(), storage_keys)
+            .await
+            .expect("Failed to insert embedding and text");
 
         let vec: Vec<f32> = vec![0.1, 0.1, 0.1, 0.1];
         let retrieval_keys: HashMap<String, String> = [("key1".to_string(), "1".to_string())]
@@ -73,16 +68,10 @@ mod tests {
         .cloned()
         .collect();
 
-        DbManager::store_memory(
-            &database,
-            text.clone(),
-            float_vec.clone(),
-            storage_keys,
-        )
-        .await
-        .expect("Failed to insert embedding and text");
+        DbManager::store_memory(&database, text.clone(), float_vec.clone(), storage_keys)
+            .await
+            .expect("Failed to insert embedding and text");
 
-        
         let result: Vec<u8> = database
             .call(|db| {
                 db.query_row(
