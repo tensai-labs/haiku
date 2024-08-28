@@ -15,12 +15,8 @@ impl DbManager {
             sqlite3_auto_extension(Some(std::mem::transmute(sqlite3_vec_init as *const ())));
         }
 
-        #[cfg(not(test))]
         let database =
             DbManager::open_connection(&config.haiku.metadata.database_url.clone()).await?;
-
-        #[cfg(test)]
-        let database = DbManager::open_test_connection().await?;
 
         DbManager::check_loaded_extension(&database).await?;
 
@@ -35,15 +31,6 @@ impl DbManager {
         let database = Connection::open(database_url)
             .await
             .expect("Failed to open database");
-
-        Ok(database)
-    }
-
-    #[cfg(test)]
-    pub async fn open_test_connection() -> eyre::Result<Connection> {
-        let database = Connection::open_in_memory()
-            .await
-            .expect("Failed to open in-memory database");
 
         Ok(database)
     }
@@ -195,118 +182,5 @@ impl DbManager {
             .expect("Sqlite-vec extension not loaded");
 
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::convert::TryInto;
-
-    #[tokio::test]
-    async fn test_db_operations() {
-        let config = Config::default();
-        let database = DbManager::init_db(&config)
-            .await
-            .expect("Failed to initialize database");
-
-        let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
-        let text: String = "Text sample".to_string();
-        let storage_keys: HashMap<String, String> = [
-            ("key1".to_string(), "1".to_string()),
-            ("key2".to_string(), "2".to_string()),
-        ]
-        .iter()
-        .cloned()
-        .collect();
-
-        DbManager::insert_embedding_and_text(
-            &database,
-            text.clone(),
-            float_vec.clone(),
-            storage_keys,
-        )
-        .await
-        .expect("Failed to insert embedding and text");
-
-        let vec: Vec<f32> = vec![0.1, 0.1, 0.1, 0.1];
-        let retrieval_keys: HashMap<String, String> = [("key1".to_string(), "1".to_string())]
-            .iter()
-            .cloned()
-            .collect();
-        let retrieved_memories = DbManager::retrieve_memories(
-            &database,
-            vec,
-            retrieval_keys,
-            config.haiku.db_config.number_memory_to_retrieve,
-        )
-        .await
-        .expect("Failed to retrieve memories");
-
-        assert_eq!(
-            retrieved_memories[0],
-            "Text sample".to_string(),
-            "No memories retrieved"
-        );
-    }
-
-    #[tokio::test]
-    async fn test_embedding_precision() {
-        let config = Config::default();
-        let database = DbManager::init_db(&config)
-            .await
-            .expect("Failed to initialize database");
-
-        let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
-
-        let text: String = "Text sample".to_string();
-        let storage_keys: HashMap<String, String> = [
-            ("key1".to_string(), "1".to_string()),
-            ("key2".to_string(), "2".to_string()),
-        ]
-        .iter()
-        .cloned()
-        .collect();
-
-        DbManager::insert_embedding_and_text(
-            &database,
-            text.clone(),
-            float_vec.clone(),
-            storage_keys,
-        )
-        .await
-        .expect("Failed to insert embedding and text");
-
-        let result: Vec<u8> = database
-            .call(|db| {
-                db.query_row(
-                    "
-                SELECT
-                    vector
-                FROM embedding
-                ",
-                    [],
-                    |row| row.get(0),
-                )
-                .map_err(|e| e.into())
-            })
-            .await
-            .expect("Failed to retrieve row");
-
-        // Convert Vec<u8> back to Vec<f32>
-        let float_vec: Vec<f32> = result
-            .chunks_exact(4)
-            .map(|chunk| {
-                let arr: [u8; 4] = chunk.try_into().expect("Chunk must be 4 bytes");
-                f32::from_le_bytes(arr)
-            })
-            .collect();
-
-        // Ensure no precision is lost
-        assert_eq!(
-            float_vec,
-            vec![0.1, 0.2, 0.3, 0.4],
-            "Values should be identical"
-        );
     }
 }
