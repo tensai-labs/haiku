@@ -17,7 +17,7 @@ source = "git+https://github.com/dojoengine/dojo?rev=f15def33#f15def330c0d099e79
 [[package]]
 name = "haiku_event"
 version = "0.1.0"
-source = "git+https://github.com/edisontim/haiku?rev=cc7c9731102f48964eb9213e0d29caef33f3a06b#cc7c9731102f48964eb9213e0d29caef33f3a06b"
+source = "git+https://github.com/edisontim/haiku#3417ef1c7fcb74bdda10448de5096c01a822147d"
 dependencies = [
  "dojo",
 ]
