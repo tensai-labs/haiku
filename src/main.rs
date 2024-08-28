@@ -12,10 +12,11 @@ use tracing_subscriber::EnvFilter;
 
 use crate::actors::{event_handler::EventHandler, prompt_handler::PromptHandler};
 
+use self::actors::config_handler::create_config;
 use self::types::config_types::Config;
 use crate::utils::db_manager::DbManager;
 
-async fn init_services(config: Config) {
+async fn init_services(config: Config) -> eyre::Result<()> {
     let database = DbManager::init_db(&config)
         .await
         .expect("Failed to initialize database");
@@ -28,6 +29,13 @@ async fn init_services(config: Config) {
     )
     .await
     .expect("Failed to connect to the Torii client");
+
+    tracing::info!("Launching relay runner");
+
+    let runner = client.relay_runner().clone();
+    tokio::spawn(async move {
+        runner.lock().await.run().await;
+    });
 
     tracing::info!("Torii client successfully connected");
 
@@ -57,6 +65,9 @@ async fn init_services(config: Config) {
     });
 
     prompt_handler.run().await;
+
+    tracing::info!("All services running 🚀");
+    Ok(())
 }
 
 #[tokio::main]
@@ -74,5 +85,12 @@ async fn main() {
     let config = Config::from_toml(config_file_path.expect("Config file path not provided"))
         .expect("Failed to load config");
 
-    init_services(config).await
+    let services_init_ret = init_services(config).await;
+
+    if services_init_ret.is_err() {
+        tracing::error!(
+            "Failed to initialize services {:?}",
+            services_init_ret.unwrap_err()
+        );
+    }
 }

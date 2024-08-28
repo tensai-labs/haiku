@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::HashMap, str::FromStr};
 
 use starknet_crypto::Felt;
 use tokio::sync::mpsc;
@@ -56,7 +56,7 @@ impl PromptHandler {
 
         let query_embedding = self.llm_client.request_embedding(&prompt.prompt).await?;
 
-        DbManager::retrieve_similar_memories(
+        let memories = DbManager::retrieve_similar_memories(
             &self.database,
             query_embedding,
             prompt.retrieval_key_values,
@@ -71,6 +71,7 @@ impl PromptHandler {
             .push_str("For context, here are some memories of similar events related to this one");
 
         // Enter the results from the cosine similarity here
+        // memories
         improved_prompt.push_str("");
 
         let response = self

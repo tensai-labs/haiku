@@ -1,0 +1,12 @@
+[package]
+cairo-version = "=2.7.0"
+name = "haiku_event"
+version = "0.1.0"
+
+[cairo]
+sierra-replace-ids = true
+
+[dependencies]
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.8" }
+
+[lib]
