@@ -29,7 +29,13 @@ impl BuildConfigSubcommand {
 
         let mut events = Vec::new();
         for model in manifest.models {
-            if model.inner.tag.starts_with("haiku") {
+            let (namespace, name) = model.inner.tag.split_once('-').unwrap_or_else(|| {
+                panic!(
+                    "Failed to split tag '{}' on '-'. Expected format: 'namespace-name'",
+                    model.inner.tag
+                )
+            });
+            if namespace == "haiku" && name != "PromptMessage" {
                 let keys: Vec<_> = model
                     .inner
                     .members
@@ -60,6 +66,9 @@ impl BuildConfigSubcommand {
         let mut config = Config::default();
         config.haiku.name = "haiku".to_string();
         config.haiku.metadata.database_url = "torii.db".to_string();
+        config.haiku.metadata.torii_url = "http://localhost:8080/".to_string();
+        config.haiku.metadata.rpc_url = "http://localhost:5050/".to_string();
+        config.haiku.metadata.relay_url = "/ip4/127.0.0.1/udp/9090/quic-v1".to_string();
         config.haiku.context.story = "Replace this text by a compelling narrative that encapsulates the overarching theme, setting, and key elements of your game world. This should provide a rich, immersive context for all subsequent interactions and events.".to_string();
         config.events = events;
 
