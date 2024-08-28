@@ -193,7 +193,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_db_operations() {
-        let config = Config::from_toml("./src/utils/tests/config.tests.toml").expect("Failed to load test config");
+        let config = Config::from_toml("./src/utils/tests/config.tests.toml")
+            .expect("Failed to load test config");
         let database = DbManager::init_db(&config)
             .await
             .expect("Failed to initialize database");
@@ -222,9 +223,14 @@ mod tests {
             .into_iter()
             .cloned()
             .collect();
-        let retrieved_memories = DbManager::retrieve_memories(&database, vec, retrieval_keys, config.haiku.metadata.memory_retrieval_limit)
-            .await
-            .expect("Failed to retrieve memories");
+        let retrieved_memories = DbManager::retrieve_memories(
+            &database,
+            vec,
+            retrieval_keys,
+            config.haiku.metadata.memory_retrieval_limit,
+        )
+        .await
+        .expect("Failed to retrieve memories");
 
         assert_eq!(
             retrieved_memories[0],
@@ -235,7 +241,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_embedding_precision() {
-        let config = Config::from_toml("./src/utils/tests/config.tests.toml").expect("Failed to load test config");
+        let config = Config::from_toml("./src/utils/tests/config.tests.toml")
+            .expect("Failed to load test config");
         let database = DbManager::init_db(&config)
             .await
             .expect("Failed to initialize database");
