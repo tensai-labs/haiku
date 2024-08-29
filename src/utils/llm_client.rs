@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use eyre::eyre;
 use reqwest::Client;
 use serde_json::Value;
@@ -30,7 +32,10 @@ impl LlmClient {
             .send()
             .await?;
         if !response.status().is_success() {
-            return Err(eyre!(format!("API request failed: {}", response.status())));
+            return Err(eyre!(format!(
+                "Chat completion API request failed: {}",
+                response.status()
+            )));
         }
 
         let json: Value = response.json().await?;
@@ -59,7 +64,10 @@ impl LlmClient {
             .await?;
 
         if !response.status().is_success() {
-            return Err(eyre!(format!("API request failed: {}", response.status())));
+            return Err(eyre!(format!(
+                "Vectorization API request failed: {}",
+                response.status()
+            )));
         }
 
         let json: Value = response.json().await?;

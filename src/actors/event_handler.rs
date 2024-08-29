@@ -2,6 +2,7 @@ use crate::types::{config_types::Config, PromptMessage};
 use dojo_types::{primitive::Primitive, schema::Ty};
 use eyre::eyre;
 use serenity::futures::StreamExt;
+use starknet::{core::utils::parse_cairo_short_string, macros::short_string};
 use tokio::sync::mpsc;
 use torii_grpc::{client::EntityUpdateStreaming, types::schema::Entity};
 
@@ -47,10 +48,20 @@ impl EventHandler {
 
         entity.models[0].children.iter().for_each(|child| {
             let fmt_str = format!("${{{}}}", child.name);
-            finished_string = finished_string.replace(&fmt_str, &ty_to_string(&child.ty));
+            let value_as_string = ty_to_string(&child.ty);
 
-            if child.name == "event_id" {
-                prompt_message.event_id = child
+            if value_as_string.is_err() {
+                tracing::error!(
+                    "Error converting value to string: {:?}",
+                    value_as_string.err()
+                );
+                return;
+            }
+
+            finished_string = finished_string.replace(&fmt_str, &value_as_string.unwrap());
+
+            if child.name == "id" {
+                prompt_message.id = child
                     .ty
                     .as_primitive()
                     .expect("Expected a primitive")
@@ -101,15 +112,14 @@ impl EventHandler {
         prompt_message.event_tag = event_config.tag.clone();
 
         if prompt_message.timestamp == 0 {
-            return Err(eyre!("event received doesn't have a timestamp"));
+            return Err(eyre!("event doesn't have a timestamp"));
         }
-
         if prompt_message.event_tag.is_empty() {
             return Err(eyre!("event tag is empty"));
         }
 
-        if prompt_message.event_id == 0 {
-            return Err(eyre!("event tag is empty"));
+        if prompt_message.id == 0 {
+            return Err(eyre!("event's id is empty"));
         }
 
         self.prompt_sender.send(prompt_message).await?;
@@ -118,13 +128,26 @@ impl EventHandler {
     }
 }
 
-fn ty_to_string(ty: &Ty) -> String {
+fn ty_to_string(ty: &Ty) -> eyre::Result<String> {
     match ty {
-        Ty::Enum(e) => e.option().unwrap_or_default().to_ascii_lowercase(),
+        Ty::Enum(e) => Ok(e.option().unwrap_or_default().to_ascii_lowercase()),
         Ty::Primitive(p) => match p {
-            Primitive::ContractAddress(addr) => addr.unwrap().to_hex_string(),
-            _ => p.to_string(),
+            Primitive::ContractAddress(addr) => Ok(addr.unwrap().to_hex_string()),
+            Primitive::Felt252(felt) => {
+                Ok(parse_cairo_short_string(&felt.ok_or_else(|| {
+                    eyre::eyre!("Failed to parse Cairo short string")
+                })?)?)
+            }
+            _ => Ok(i64::from_str_radix(
+                &format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
+                16,
+            )?
+            .to_string()),
         },
-        _ => ty.to_string(),
+        _ => Ok(i64::from_str_radix(
+            &format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
+            16,
+        )?
+        .to_string()),
     }
 }

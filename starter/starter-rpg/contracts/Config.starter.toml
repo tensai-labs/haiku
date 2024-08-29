@@ -1,0 +1,98 @@
+[haiku]
+name = "haiku"
+
+[haiku.metadata]
+torii_url = "http://localhost:8080"
+rpc_url = "http://localhost:5050"
+world_address = "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950b2"
+relay_url = "/ip4/127.0.0.1/udp/9090/quic-v1"
+database_url = "haiku.db"
+signer_address = "0x0101010101010101010101010101010101010101010101010101010101010101"
+signer_public_key = "0x0101010101010101010101010101010101010101010101010101010101010101"
+signer_private_key = "0x0101010101010101010101010101010101010101010101010101010101010101"
+
+[haiku.context]
+story = """This is the japanese feodal era, the player is a samurai. You are the companion of the player, talk to him like a friend. Use as many swear words as possible. Keep your answers concise, maximum 2 sentences. Only mention the current action, nothing else."""
+
+[haiku.llm]
+model = "gpt-4o-mini"
+ai_url = "https://api.openai.com/v1/chat/completions"
+ai_token = ""
+vectorization_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
+vectorization_token = ""
+
+[haiku.db_config]
+vector_size = "384"
+number_memory_to_retrieve = "1"
+
+[[events]]
+tag = "haiku-AttackEvent"
+
+[events.prompt]
+template = "You're ${player_name}, a role ${player_role} samurai. You've attacked a role ${dungeon_role} monster. His remaining health is ${dungeon_health}, yours is ${player_health}. The reward if you defeat him is ${dungeon_reward} gold. Only mention it if the monster has 0 health or less."
+
+[events.db_keys]
+storage_keys = ["player_id"]
+retrieval_keys = ["player_id"]
+
+[[events.keys_mapping]]
+key = "player_id"
+alias = ""
+
+[[events.keys_mapping]]
+key = "id"
+alias = ""
+
+[[events]]
+tag = "haiku-HealEvent"
+
+[events.prompt]
+template = "You're ${player_name}, a role ${player_role} samurai. You've healed during a battle with a role ${dungeon_role} monster. His remaining health is ${dungeon_health}, yours is ${player_health}."
+
+[events.db_keys]
+storage_keys = ["player_id"]
+retrieval_keys = ["player_id"]
+
+[[events.keys_mapping]]
+key = "player_id"
+alias = ""
+
+[[events.keys_mapping]]
+key = "id"
+alias = ""
+
+[[events]]
+tag = "haiku-MoveEvent"
+
+[events.prompt]
+template = "You're ${player_name}, a role ${player_role} samurai. You've advanced in the dungeon, you encounter a ${new_dungeon_role} monster. Create a shortstory just narrating the moment the player sees the monster."
+
+[events.db_keys]
+storage_keys = ["player_id"]
+retrieval_keys = ["player_id"]
+
+[[events.keys_mapping]]
+key = "player_id"
+alias = ""
+
+[[events.keys_mapping]]
+key = "id"
+alias = ""
+
+[[events]]
+tag = "haiku-SpawnEvent"
+
+[events.prompt]
+template = "You're ${player_name}, a role ${player_role} samurai. You've just set foot in the game, a new dungeon. Create a backstory for that character in 3 sentences."
+
+[events.db_keys]
+storage_keys = ["player_id"]
+retrieval_keys = ["player_id"]
+
+[[events.keys_mapping]]
+key = "player_id"
+alias = ""
+
+[[events.keys_mapping]]
+key = "id"
+alias = ""
