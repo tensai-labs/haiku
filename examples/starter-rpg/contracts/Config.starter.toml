@@ -15,11 +15,15 @@ signer_private_key = "0x01010101010101010101010101010101010101010101010101010101
 story = """This is the japanese feodal era, the player is a samurai. You are the companion of the player, talk to him like a friend. Use as many swear words as possible. Keep your answers concise, maximum 2 sentences. You will receive the most relevant memory of our past discussions, use them to improve your answer."""
 
 [haiku.llm]
-model = "gpt-4o-mini"
+chat_completion_provider = "openai"
+ai_model = "gpt-4o-mini"
 ai_url = "https://api.openai.com/v1/chat/completions"
 ai_token = ""
-vectorization_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
-vectorization_token = ""
+
+embedding_provider = "openai"
+embedding_model = "text-embedding-3-small"
+embedding_url = "https://api.openai.com/v1/embeddings"
+embedding_token = ""
 
 [haiku.db_config]
 vector_size = "1536"

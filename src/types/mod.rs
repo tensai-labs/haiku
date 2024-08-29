@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 pub mod config_types;
+pub mod llm_client;
 
 #[derive(Debug, Clone, Default)]
 pub struct PromptMessage {

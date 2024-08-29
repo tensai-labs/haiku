@@ -6,17 +6,15 @@ use tokio_rusqlite::Connection;
 use torii_client::client::Client;
 
 use crate::{
-    types::{config_types::Config, PromptMessage},
-    utils::{
-        db_manager::DbManager, llm_client::LlmClient, prompt_event_message::PromptOffchainMessage,
-    },
+    types::{config_types::Config, llm_client::provider::Provider, PromptMessage},
+    utils::{db_manager::DbManager, prompt_event_message::PromptOffchainMessage},
 };
 
 pub struct PromptHandler {
     prompt_receiver: mpsc::Receiver<PromptMessage>,
     config: Config,
     pub database: Connection,
-    pub llm_client: LlmClient,
+    pub provider_manager: Provider,
     pub torii_client: Client,
 }
 
@@ -31,7 +29,7 @@ impl PromptHandler {
             prompt_receiver,
             config: config.clone(),
             database,
-            llm_client: LlmClient::new(config.clone()).expect("Failed to initialize LLM client"),
+            provider_manager: Provider::new(&config).expect("Failed to initialize LLM client"),
             torii_client,
         }
     }
@@ -54,7 +52,10 @@ impl PromptHandler {
             .find(|event| event.tag == prompt.event_tag)
             .ok_or(eyre::eyre!("Event not found"))?;
 
-        let query_embedding = self.llm_client.request_embedding(&prompt.prompt).await?;
+        let query_embedding = self
+            .provider_manager
+            .request_embedding(&prompt.prompt)
+            .await?;
 
         let memories = DbManager::retrieve_similar_memories(
             &self.database,
@@ -80,11 +81,11 @@ impl PromptHandler {
         }
 
         let response = self
-            .llm_client
+            .provider_manager
             .request_chat_completion(&improved_prompt)
             .await?;
 
-        let embedding = self.llm_client.request_embedding(&response).await?;
+        let embedding = self.provider_manager.request_embedding(&response).await?;
 
         DbManager::store_memory(
             &self.database,
