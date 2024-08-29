@@ -1,7 +1,7 @@
 use rusqlite::ffi::sqlite3_auto_extension;
 use sqlite_vec::sqlite3_vec_init;
-use tokio_rusqlite::{params, Connection};
 use std::collections::HashMap;
+use tokio_rusqlite::{params, Connection};
 
 use crate::types::config_types::Config;
 
@@ -152,7 +152,7 @@ impl DbManager {
                             ?
                         ) ASC 
                         LIMIT {limit}",
-                    values.join(",")
+                    values.join(","),
                 );
 
                 let vector_bytes: Vec<u8> = query_embedding

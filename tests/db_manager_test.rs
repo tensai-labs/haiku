@@ -25,15 +25,29 @@ mod tests {
         .cloned()
         .collect();
 
-        DbManager::store_memory(&database, text.clone(), float_vec.clone(), storage_keys)
+        let mut i = 0;
+        while i < 5 {
+            let rows = DbManager::store_memory(
+                &database,
+                text.clone(),
+                float_vec.clone(),
+                storage_keys.clone(),
+            )
             .await
             .expect("Failed to insert embedding and text");
 
+            let (left, right) = rows;
+            i += 1;
+        }
+
         let vec: Vec<f32> = vec![0.1, 0.1, 0.1, 0.1];
-        let retrieval_keys: HashMap<String, String> = [("key1".to_string(), "1".to_string())]
-            .iter()
-            .cloned()
-            .collect();
+        let retrieval_keys: HashMap<String, String> = [
+            ("key1".to_string(), "1".to_string()),
+            ("key2".to_string(), "2".to_string()),
+        ]
+        .iter()
+        .cloned()
+        .collect();
         let retrieved_memories = DbManager::retrieve_similar_memories(
             &database,
             vec,
@@ -42,6 +56,12 @@ mod tests {
         )
         .await
         .expect("Failed to retrieve memories");
+
+        assert_eq!(
+            retrieved_memories.iter().count(),
+            1,
+            "Incorrect number of memories retrieved"
+        );
 
         assert_eq!(
             retrieved_memories[0],
