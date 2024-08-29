@@ -240,6 +240,7 @@ Maps custom keys from your event to aliases, facilitating consistent storage and
 | `alias` | A standardized name used to represent similar entities across different events<br>Example: `player_id` and `target_entity_id` might both be aliased to `player` |
 
 Example: 'player_id' and 'target_entity_id' might both be aliased to 'player'
+<hr>
 
 
 <br><br>
