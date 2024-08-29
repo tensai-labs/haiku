@@ -13,17 +13,17 @@ signer_private_key = "0x01010101010101010101010101010101010101010101010101010101
 
 [haiku.llm]
 chat_completion_provider = "ollama"
-ai_model = "gpt-4o-mini"
+ai_model = "haiku"
 ai_url = "http://localhost:11434/api/generate"
 ai_token = ""
 
 embedding_provider = "baai-bge"
 embedding_model = ""
-vectorization_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
-vectorization_token = ""
+embedding_url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5"
+embedding_token = ""
 
 [haiku.db_config]
-vector_size = "384"
+vector_size = "1536"
 number_memory_to_retrieve = "1"
 
 [haiku.context]

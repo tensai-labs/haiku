@@ -55,8 +55,8 @@ pub struct Llm {
     pub ai_model: String,
     pub ai_url: String,
     pub ai_token: String,
-    pub vectorization_url: String,
-    pub vectorization_token: String,
+    pub embedding_url: String,
+    pub embedding_token: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]

@@ -4,8 +4,8 @@ use eyre::Result;
 use reqwest::Client;
 use serde_json::Value;
 
-use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
 use crate::types::config_types::Config;
+use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
 
 pub struct OpenAIProvider {
     config: Config,
@@ -61,10 +61,10 @@ impl EmbeddingProvider for OpenAIProvider {
     async fn request_embedding(&self, text: &str) -> eyre::Result<Vec<f32>> {
         let response = self
             .client
-            .post(&self.config.haiku.llm.vectorization_url)
+            .post(&self.config.haiku.llm.embedding_url)
             .header(
                 "Authorization",
-                format!("Bearer {}", self.config.haiku.llm.vectorization_token),
+                format!("Bearer {}", self.config.haiku.llm.embedding_token),
             )
             .header("Content-Type", "application/json")
             .json(&serde_json::json!({ "input": text, "model": &self.config.haiku.llm.embedding_model, "encoding_format": "float"}))

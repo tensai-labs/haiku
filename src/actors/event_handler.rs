@@ -118,10 +118,6 @@ impl EventHandler {
             return Err(eyre!("event tag is empty"));
         }
 
-        if prompt_message.id == 0 {
-            return Err(eyre!("event's id is empty"));
-        }
-
         self.prompt_sender.send(prompt_message).await?;
 
         Ok(())

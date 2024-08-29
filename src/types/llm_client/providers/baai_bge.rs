@@ -4,8 +4,8 @@ use eyre::eyre;
 use reqwest::Client;
 use serde_json::Value;
 
-use crate::types::llm_client::traits::EmbeddingProvider;
 use crate::types::config_types::Config;
+use crate::types::llm_client::traits::EmbeddingProvider;
 
 pub struct BaaiBGEProvider {
     config: Config,
@@ -26,10 +26,10 @@ impl EmbeddingProvider for BaaiBGEProvider {
     async fn request_embedding(&self, text: &str) -> eyre::Result<Vec<f32>> {
         let response = self
             .client
-            .post(&self.config.haiku.llm.vectorization_url)
+            .post(&self.config.haiku.llm.embedding_url)
             .header(
                 "Authorization",
-                format!("Bearer {}", self.config.haiku.llm.vectorization_token),
+                format!("Bearer {}", self.config.haiku.llm.embedding_token),
             )
             .header("Content-Type", "application/json")
             .json(&serde_json::json!({ "inputs": text }))

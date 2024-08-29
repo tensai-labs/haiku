@@ -14,8 +14,7 @@ mod tests {
         // Ollama model name
         config.haiku.llm.ai_model = "".to_string();
 
-        let ai_service_manager =
-            Provider::new(&config).expect("Failed to create ollama_provider");
+        let ai_service_manager = Provider::new(&config).expect("Failed to create ollama_provider");
 
         let test_message = "Are you online ?";
         let response = ai_service_manager
@@ -36,11 +35,11 @@ mod tests {
         config.haiku.llm.chat_completion_provider = "ollama".to_string();
 
         config.haiku.llm.embedding_provider = "baai-bge".to_string();
-        config.haiku.llm.vectorization_url =
+        config.haiku.llm.embedding_url =
             "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5".to_string();
 
         // Huggingface API key
-        config.haiku.llm.vectorization_token = "hf_xxxxx".to_string();
+        config.haiku.llm.embedding_token = "hf_xxxxx".to_string();
 
         let llm_client = Provider::new(&config).expect("Failed to create baai_provider");
 
@@ -64,14 +63,13 @@ mod tests {
 
         config.haiku.llm.embedding_provider = "openai".to_string();
         config.haiku.llm.embedding_model = "text-embedding-3-small".to_string();
-        config.haiku.llm.vectorization_url = "https://api.openai.com/v1/embeddings".to_string();
+        config.haiku.llm.embedding_url = "https://api.openai.com/v1/embeddings".to_string();
 
         // Openai API key
-        config.haiku.llm.vectorization_token = "".to_string();
+        config.haiku.llm.embedding_token = "".to_string();
 
         let test_message = "Are you online ?";
-        let ai_service_manager =
-            Provider::new(&config).expect("Failed to create baai_provider");
+        let ai_service_manager = Provider::new(&config).expect("Failed to create baai_provider");
 
         let embedding_response = ai_service_manager.request_embedding(test_message).await?;
         assert!(
