@@ -13,7 +13,6 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
 - [Getting Started](#getting-started)
   - [Install Dojo](#install-dojo)
   - [Install Haiku](#install-haiku)
-  - [Add Haiku to your path](#add-haiku-to-your-path)
   - [Add Haiku events in your project](#add-haiku-events-in-your-project)
   - [Add Haiku dependencies](#add-haiku-dependencies)
   - [Build and migrate your dojo project](#build-and-migrate-you-dojo-project)
@@ -61,13 +60,7 @@ Follow the instructions to install Dojo [here](https://book.dojoengine.org/getti
 ## Install Haiku
 
 ```
-todo: add haiku to releases and curl ...
-```
-
-## Add Haiku to your path
-
-```
-todo
+./scripts/install.sh
 ```
 
 ## Add Haiku events in your project
@@ -207,11 +200,12 @@ Configures the Language Model (LLM) used for generating Haiku responses and the 
 
 | Key                        | Description                                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `model`                    | Name of the model you want to interact with<br>Default: `"haiku"`                                             |
 | `chat_completion_provider` | The chosen model provider for generating responses<br>Possible options: `"ollama"` \| `"openai"`              |
+| `ai_model`                 | Name of the model from the provider you want to interact with                                                 |
 | `ai_url`                   | LLM API endpoint                                                                                              |
 | `ai_token`                 | LLM Bearer Token<br>Required for OpenAI, leave empty for Ollama                                               |
 | `embedding_provider`       | The chosen embedding provider for vectorizing text<br>Possible options: `"baai-bge"` \| `"openai"`            |
+| `embedding_model`          | Name of the model from the provider for vectorizing text<br>Example: `"text-embedding-3-small"`               |
 | `embedding_url`            | Embedding Model API endpoint<br>Example: `https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5` |
 | `embedding_token`          | Embedding Model Bearer Token                                                                                  |
 
