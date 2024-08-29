@@ -20,18 +20,21 @@ export const HaikuMessages = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [promptMessages]);
 
-    defineComponentSystem(dojo.world, dojo.setup.contractComponents.PromptMessage, ((update) => {
-        const newMessage = {
-            message: update.value[0]?.prompt,
-            timestamp: new Date().toLocaleString()
-        };
-        setPromptMessages(prevMessages => {
-            const updatedMessages = [...prevMessages, newMessage];
-            return updatedMessages
-                .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-                .slice(0, 5);
-        });
-    }))
+    useEffect(() => {
+        defineComponentSystem(dojo.world, dojo.setup.contractComponents.PromptMessage, ((update) => {
+            const newMessage = {
+                message: update.value[0]?.prompt,
+                timestamp: new Date().toLocaleString()
+            };
+            setPromptMessages(prevMessages => {
+                const updatedMessages = [...prevMessages, newMessage];
+                return updatedMessages
+                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                    .slice(0, 5);
+            });
+        }))
+    }, []);
+
     return (
         <div style={{
             border: '3px solid #B22222', // Deeper red border
