@@ -42,9 +42,11 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
 # How It Works
 
 1. Emit custom haiku events from your smart contracts.
-2. The events trigger an LLM chat completion request.
-3. Haiku has access to past events related to the fired event to add context to the response.
-4. LLM responses are streamed back to you leveraging torii offchain messages.
+2. The events triggers Haiku which vectorizes the event model.
+3. Haiku compares the vectorized model to other memories in the vector db using cosine similarity.
+4. The event and the returned memories are put together to create a prompt which is sent to the LLM.
+5. The llm response is streamed back to torii leveraging offchain messages.
+6. The result is vectorized and stored in the vector db as a new memory.
 
 <hr>
 <br>
