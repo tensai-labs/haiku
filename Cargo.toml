@@ -34,6 +34,7 @@ cainome = { git = "https://github.com/cartridge-gg/cainome" }
 cairo-lang-filesystem = "=2.7.0"
 scarb = { git = "https://github.com/software-mansion/scarb", tag = "v2.7.0" }
 sqlite-vec = "0.1.1"
+async-trait = "0.1.81"
 
 [dependencies.tokio]
 version = "1.0"
