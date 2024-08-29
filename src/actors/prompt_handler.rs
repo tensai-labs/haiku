@@ -60,7 +60,11 @@ impl PromptHandler {
             &self.database,
             query_embedding,
             prompt.retrieval_key_values,
-            self.config.haiku.db_config.vector_size.clone(),
+            self.config
+                .haiku
+                .db_config
+                .number_memory_to_retrieve
+                .clone(),
         )
         .await?;
 
