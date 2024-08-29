@@ -1,21 +1,100 @@
 ![alt text](img/Haiku-blue.png)
 
-# Haiku - AI-Powered Lore Generation for Dojo Projects
+# Haiku: AI Content Generation for Dojo Games and Applications
 
-Haiku enables developers to effortlessly implement AI-powered lore generation within Dojo-powered applications by leveraging contract events as triggers and generating contextual lore as outputs, streamed back to the world through event messages.
+[Dojo](https://github.com/dojoengine/dojo) provides a user-friendly platform for creating verifiable Games, Autonomous Worlds, and various Applications that are natively composable, extensible, permissionless and persistent.
+
+Haiku empowers developers to seamlessly integrate AI-driven content generation into their Dojo applications and games. The content generation is triggered by contract events and streamed back to the game world through Dojo's offchain message system, making it easy for developers to integrate it in their client. With Haiku, developers can effortlessly enhance their projects with intelligent, context-aware content that evolves alongside player interactions and game states.
 
 # Key Features
 
-- Seamless integration with Dojo projects
-- AI responses triggered by contract events
-- Simple configuration through the `config.toml` file
+- Seamless integration with Dojo projects.
+- AI triggered by contract events.
+- Results stored in torii offchain messages.
+- Simple configuration and prompt engineering through the haiku `config.toml` file.
 
 # How It Works
 
-1. Emit dojo events from your smart contracts
-2. Events trigger an LLM chat completion request
-3. LLM responses are streamed back to you leveraging dojo event messages
+1. Emit custom haiku events from your smart contracts.
+2. The events trigger an LLM chat completion request.
+4. Haiku has access to past events related to the fired event to add context to the response.
+3. LLM responses are streamed back to you leveraging torii offchain messages.
 
+# Getting Started
+
+## Install Dojo
+Follow the instructions to install Dojo [here](https://book.dojoengine.org/getting-started).
+## Install Haiku
+```
+todo: add haiku to releases and curl ...
+```
+
+## Add Haiku to your path
+```
+todo
+```
+
+## Add Haiku events in your project
+Events must follow the structure:
+```
+#[derive(Copy, Drop, Serde)]
+#[dojo::event]
+#[dojo::model(namespace: "haiku", nomapping: true)]
+struct YourEventName {
+      #[key]
+      id: u32,
+      timestamp: u64,
+      // Add any additional fields or keys you need for your event
+      // ...
+}
+```
+
+The event struct must include these requirements:
+- Set the `namespace` to `"haiku"` and `nomapping` to `true` in the `#[dojo::model]` attribute
+- Include an `id` field of type `u32` with the `#[key]` attribute
+- Include a `timestamp` field of type `u64`
+
+You can choose any name for your event struct (replace `YourEventName`) and add any additional fields that your event requires.
+
+## Add Haiku dependencies 
+Add the following to your Scarb.toml
+```
+[dependencies]
+haiku_event = { git = "https://github.com/edisontim/haiku" }
+
+[[target.dojo]]
+build-external-contracts = [ "haiku_event::PromptMessage" ]
+```
+
+## Build and migrate you dojo project
+Instructions on how to build and migrate a dojo project can be found [here](https://book.dojoengine.org/toolchain/sozo/project-commands/build) and [here](https://book.dojoengine.org/toolchain/sozo/project-commands/migrate).
+
+## Generate Your Haiku Configuration Template
+After creating your Dojo manifest.toml file, you can generate a Haiku configuration template using the following command:
+```
+Usage: haiku build [MANIFEST_FILE_PATH] [OUTPUT_CONFIG_FILE_PATH]
+
+Arguments:
+  [MANIFEST_FILE_PATH]       Path to the manifest file [default: ./manifest.toml]
+  [OUTPUT_CONFIG_FILE_PATH]  Path to output config file [default: ./config.toml]
+```
+
+## Complete the Haiku Configuration Template
+
+After generating the initial Haiku configuration template, you'll need to fill in the necessary details to customize it for your project. This step is crucial for ensuring that Haiku integrates correctly with your Dojo setup and functions as intended.
+
+## Run Haiku
+
+To run Haiku, you need to specify the path to your Haiku configuration file. Use the following command:
+```
+Usage: haiku run <CONFIG_FILE_PATH>
+
+Arguments:
+  <CONFIG_FILE_PATH>  Path to the configuration file
+
+```
+
+Now that your Haiku results are being streamed as offchain messages, you can integrate them into your client application. To help you get started, we've provided example client implementations in the `/examples` folder of this repository. These examples demonstrate various ways to consume and display Haiku messages in different client environments.
 
 # Haiku Configuration
 
