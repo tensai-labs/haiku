@@ -1,7 +1,7 @@
 
 ![alt text](img/Haiku-blue.png)
 
-<p align="center">
+<div align="center">
 
  <sup><sub>I write, erase, rewrite<sup><sub>
 
@@ -10,7 +10,7 @@
  <sup><sub>A poppy blooms.<sup><sub>
 
  <sup><sub>- Katsushika Hokusai -<sup><sub>
-</p>
+</div>
 
 # Haiku: AI Content Generation for Dojo Games and Applications
 
