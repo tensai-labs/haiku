@@ -28,6 +28,10 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
   - [Context](#context)
   - [Events](#events)
 
+<hr>
+<br>
+<br>
+
 # Key Features
 
 - Seamless integration with Dojo projects.
@@ -42,6 +46,9 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
 4. Haiku has access to past events related to the fired event to add context to the response.
 3. LLM responses are streamed back to you leveraging torii offchain messages.
 
+<hr>
+<br>
+<br>
 
 # Getting Started
 
@@ -124,7 +131,6 @@ Now that your Haiku results are being streamed as offchain messages, you can int
 <hr>
 <br>
 <br>
-<br>
 
 # Supported Data Types and Limitations
 
@@ -151,7 +157,6 @@ When defining your event fields, ensure you use these supported types to guarant
 Note: This list of supported types may expand in future versions of Haiku. Always refer to the most recent documentation for up-to-date information on supported data types.
 
 <hr>
-<br>
 <br>
 <br>
 
