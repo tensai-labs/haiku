@@ -5,47 +5,37 @@ authors = ["my name <my@email.address>"]
 edition = "2018"
 
 [dependencies]
-dotenv = "0.15"
-tracing = { version = "0.1", default-features = false, features = ["attributes"] }
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-
-clap = { version = "4.5.16", features = ["derive"] }
+# general
 serde = { version = "1.0.197", default-features = false, features = ["derive"] }
-dotenvy = { version = "0.15.7", default-features = false }
-envy = { version = "0.4.2", default-features = false }
-eyre = {version = "0.6", default-features = false, features = ["auto-install"]}
-tokio-rusqlite = {version = "0.5.0"}
-rusqlite = {version = "0.30.0"}
-poise = { version = "0.6.1" }
-toml = "0.7"
-starknet = "0.11.0"
-starknet-crypto = "0.7.0"
-starknet-types-core = "~0.1.4"
-dojo-types = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
-torii-client = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
-torii-grpc = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
+serde_json = { version = "1.0", default-features = false }
+
+# tokio related
+tokio = { version = "1.0", features = ["macros", "signal", "rt-multi-thread"] }
+tokio-retry = { version = "0.3.0", default-features = false }
+tokio-rusqlite = {version = "0.5.0", default-features = false }
+rusqlite = {version = "0.30.0", default-features = false }
+
+# starknet / dojo
+starknet = { version = "0.11.0" }
+starknet-crypto = { version = "0.7.0", default-features = false }
+dojo-types = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
+torii-client = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
+torii-grpc = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
 torii-relay = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
-dojo-world = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model"  }
-serde_json = "1.0"
-config = "0.13.1"
-camino = "1.1.6"
-
-cainome = { git = "https://github.com/cartridge-gg/cainome" }
-cairo-lang-filesystem = "=2.7.0"
+dojo-world = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
 scarb = { git = "https://github.com/software-mansion/scarb", tag = "v2.7.0" }
-sqlite-vec = "0.1.1"
+sqlite-vec = {version = "0.1.1", default-features = false}
 
-[dependencies.tokio]
-version = "1.0"
-features = ["macros", "signal", "rt-multi-thread"]
-
-[dependencies.serenity]
-version = "0.12.2"
-features = ["cache", "framework", "standard_framework", "rustls_backend"]
-
-[dependencies.reqwest]
-version = "0.11"
-features = ["json"]
+# others
+tracing = { version = "0.1", default-features = false, features = ["attributes"] }
+tracing-subscriber = { version = "0.3", default-features = false, features = ["env-filter"] }
+eyre = {version = "0.6", default-features = false, features = ["auto-install"]}
+toml = { version = "0.7", default-features = false, features = ["parse", "display"] }
+clap = { version = "4.5.16", default-features = false, features = ["derive"] }
+config = { version = "0.13.1", default-features = false }
+camino = { version = "1.1.6", default-features = false }
+serenity = { version = "0.12.2", features = ["cache", "framework", "standard_framework", "rustls_backend"] }
+reqwest = { version = "0.11", features = ["json"] }
 
 [patch.crates-io]
 # Remove this patch once the following PR is merged: <https://github.com/xJonathanLEI/starknet-rs/pull/615>

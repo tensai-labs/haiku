@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
-import "./App.css";
-import * as torii from "@dojoengine/torii-client";
-import { dojoConfig } from "../dojoConfig";
-import { Button } from "./components/ui/button";
-import { setupWorld } from "./typescript/contracts.gen";
 import { DojoProvider } from "@dojoengine/core";
 import { BurnerManager } from "@dojoengine/create-burner";
+import * as torii from "@dojoengine/torii-client";
+import { useCallback, useEffect, useState } from "react";
 import { Account } from "starknet";
+import { dojoConfig } from "../dojoConfig";
+import "./App.css";
+import { Button } from "./components/ui/button";
 import { Dungeon, Player } from "./types";
+import { setupWorld } from "./typescript/contracts.gen";
 
 const client = await setupWorld(
   new DojoProvider(dojoConfig.manifest, dojoConfig.rpcUrl)
@@ -76,8 +76,6 @@ function App() {
             }
             return newDungeons;
           });
-
-          console.log("Updated entities:", fetchedEntities);
         }
       );
     } catch (error) {
