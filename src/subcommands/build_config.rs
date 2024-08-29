@@ -73,7 +73,7 @@ impl BuildConfigSubcommand {
         config.haiku.llm.vectorization_url =
             "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5".to_string();
         config.haiku.context.story = "Replace this text by a compelling narrative that encapsulates the overarching theme, setting, and key elements of your game world. This should provide a rich, immersive context for all subsequent interactions and events.".to_string();
-        config.haiku.db_config.vector_size = "4".to_string();
+        config.haiku.db_config.vector_size = "384".to_string();
         config.haiku.db_config.number_memory_to_retrieve = "1".to_string();
         config.events = events;
 
