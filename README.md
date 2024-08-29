@@ -1,16 +1,16 @@
 
 ![alt text](img/Haiku-blue.png)
 
-<div align="center">
+<p align="center">
 
-      I write, erase, rewrite
+ <sup><sub>I write, erase, rewrite<sup><sub>
 
-      Erase again, and then
+ <sup><sub>Erase again, and then<sup><sub>
 
-      A poppy blooms.
+ <sup><sub>A poppy blooms.<sup><sub>
 
-      - Katsushika Hokusai -
-</div>
+ <sup><sub>- Katsushika Hokusai -<sup><sub>
+</p>
 
 # Haiku: AI Content Generation for Dojo Games and Applications
 
