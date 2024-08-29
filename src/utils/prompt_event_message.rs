@@ -13,7 +13,7 @@ use dojo_types::{
 use crate::utils::constants::{HAIKU_EVENTS_NAME, HAIKU_NAMESPACE};
 
 #[derive(Debug)]
-pub struct PromptEventMessage {
+pub struct PromptOffchainMessage {
     pub project_name: String,
     pub event_id: u32,
     pub event_tag: String,
@@ -21,7 +21,7 @@ pub struct PromptEventMessage {
     pub timestamp: u64,
 }
 
-impl PromptEventMessage {
+impl PromptOffchainMessage {
     pub fn new(
         project_name: String,
         event_id: u32,

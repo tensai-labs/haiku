@@ -8,7 +8,7 @@ use torii_client::client::Client;
 use crate::{
     types::{config_types::Config, PromptMessage},
     utils::{
-        db_manager::DbManager, llm_client::LlmClient, prompt_event_message::PromptEventMessage,
+        db_manager::DbManager, llm_client::LlmClient, prompt_event_message::PromptOffchainMessage,
     },
 };
 
@@ -67,15 +67,16 @@ impl PromptHandler {
                 .clone(),
         )
         .await?;
-
         let mut improved_prompt = String::from(&self.config.haiku.context.story);
         improved_prompt.push_str("An event happened in the world.");
         improved_prompt.push_str(&prompt.prompt);
-        improved_prompt
-            .push_str("For context, here are some memories of similar events related to this one");
-
-        for (_, memory) in memories.iter().enumerate() {
-            improved_prompt.push_str(&format!("\n{}.", memory));
+        if memories.len() != 0 {
+            improved_prompt.push_str(
+                "For context, here are some memories of similar events related to this one",
+            );
+            for (_, memory) in memories.iter().enumerate() {
+                improved_prompt.push_str(&format!("\n{}.", memory));
+            }
         }
 
         let response = self
@@ -87,20 +88,19 @@ impl PromptHandler {
 
         DbManager::store_memory(
             &self.database,
-            response,
+            response.clone(),
             embedding,
             prompt.storage_key_values,
         )
         .await?;
 
-        let event_message = PromptEventMessage::new(
+        let event_message = PromptOffchainMessage::new(
             self.config.haiku.name.clone(),
-            prompt.event_id,
+            prompt.id,
             prompt.event_tag,
-            improved_prompt,
+            response,
             prompt.timestamp,
         );
-
         self.send_event_messaging(event_message).await?;
 
         Ok(())
@@ -108,7 +108,7 @@ impl PromptHandler {
 
     pub async fn send_event_messaging(
         &self,
-        event_message: PromptEventMessage,
+        event_message: PromptOffchainMessage,
     ) -> eyre::Result<()> {
         self.torii_client
             .publish_message(event_message.to_message(
@@ -117,7 +117,6 @@ impl PromptHandler {
             )?)
             .await?;
 
-        tracing::debug!("hereeeee");
         Ok(())
     }
 }
