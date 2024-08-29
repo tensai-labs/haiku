@@ -1,8 +1,8 @@
-use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
+use crate::types::config_types::Config;
 use crate::types::llm_client::providers::{
     baai_bge::BaaiBGEProvider, ollama::OllamaProvider, openai::OpenAIProvider,
 };
-use crate::types::config_types::Config;
+use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
 
 pub trait ProviderTrait {
     fn create_chat_provider(

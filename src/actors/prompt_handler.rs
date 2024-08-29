@@ -29,7 +29,6 @@ impl PromptHandler {
             prompt_receiver,
             config: config.clone(),
             database,
-            // provider_manager: LlmClient::new(config.clone()).expect("Failed to initialize LLM client"),
             provider_manager: Provider::new(&config).expect("Failed to initialize LLM client"),
             torii_client,
         }

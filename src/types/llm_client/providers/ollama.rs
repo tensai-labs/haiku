@@ -3,8 +3,8 @@ use eyre::Result;
 use reqwest::Client;
 use serde_json::Value;
 
-use crate::types::llm_client::traits::ChatCompletionProvider;
 use crate::types::config_types::Config;
+use crate::types::llm_client::traits::ChatCompletionProvider;
 
 pub struct OllamaProvider {
     config: Config,
