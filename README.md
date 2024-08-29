@@ -60,7 +60,7 @@ Follow the instructions to install Dojo [here](https://book.dojoengine.org/getti
 ## Install Haiku
 
 ```
-./scripts/install.sh
+curl https://raw.githubusercontent.com/edisontim/haiku/main/scripts/install.sh | bash
 ```
 
 ## Add Haiku events in your project
