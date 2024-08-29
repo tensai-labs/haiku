@@ -16,7 +16,7 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
   - [Add Haiku to your path](#add-haiku-to-your-path)
   - [Add Haiku events in your project](#add-haiku-events-in-your-project)
   - [Add Haiku dependencies](#add-haiku-dependencies)
-  - [Build and migrate your dojo project](#build-and-migrate-your-dojo-project)
+  - [Build and migrate your dojo project](#build-and-migrate-you-dojo-project)
   - [Generate Your Haiku Configuration Template](#generate-your-haiku-configuration-template)
   - [Complete the Haiku Configuration Template](#complete-the-haiku-configuration-template)
   - [Run Haiku](#run-haiku)
@@ -99,7 +99,7 @@ build-external-contracts = [ "haiku_event::PromptMessage" ]
 ```
 
 ## Build and migrate you dojo project
-Instructions on how to build and migrate a dojo project can be found [here](https://book.dojoengine.org/toolchain/sozo/project-commands/build) and [here](https://book.dojoengine.org/toolchain/sozo/project-commands/migrate).
+For instructions on how to [build](https://book.dojoengine.org/toolchain/sozo/project-commands/build) and [migrate](https://book.dojoengine.org/toolchain/sozo/project-commands/migrate) your Dojo project, please refer to the official Dojo documentation. These steps are essential for preparing your project for use with Haiku.
 
 ## Generate Your Haiku Configuration Template
 After creating your Dojo manifest.toml file, you can generate a Haiku configuration template using the following command:
