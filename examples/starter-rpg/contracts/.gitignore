@@ -1,2 +1,4 @@
 target/** 
 manifests/** 
+haiku.db
+torii.db

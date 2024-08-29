@@ -2,7 +2,7 @@ use crate::types::{config_types::Config, PromptMessage};
 use dojo_types::{primitive::Primitive, schema::Ty};
 use eyre::eyre;
 use serenity::futures::StreamExt;
-use starknet::{core::utils::parse_cairo_short_string, macros::short_string};
+use starknet::core::utils::parse_cairo_short_string;
 use tokio::sync::mpsc;
 use torii_grpc::{client::EntityUpdateStreaming, types::schema::Entity};
 
@@ -138,13 +138,13 @@ fn ty_to_string(ty: &Ty) -> eyre::Result<String> {
                     eyre::eyre!("Failed to parse Cairo short string")
                 })?)?)
             }
-            _ => Ok(i64::from_str_radix(
+            _ => Ok(u64::from_str_radix(
                 &format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
                 16,
             )?
             .to_string()),
         },
-        _ => Ok(i64::from_str_radix(
+        _ => Ok(u64::from_str_radix(
             &format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
             16,
         )?
