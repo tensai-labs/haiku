@@ -1,4 +1,16 @@
+
 ![alt text](img/Haiku-blue.png)
+
+<div align="center">
+
+      I write, erase, rewrite
+
+      Erase again, and then
+
+      A poppy blooms.
+
+      - Katsushika Hokusai -
+</div>
 
 # Haiku: AI Content Generation for Dojo Games and Applications
 
@@ -124,82 +136,98 @@ Note: This list of supported types may expand in future versions of Haiku. Alway
 
 # Haiku Configuration
 
-   ## Glossary
-   - **E.M.:** Event Message
-
-The Haiku event system is configured in the `config.toml` file. Here are the key sections:
-
-## Haiku
-
-- **name:** Name of the E.M. domain
-
 ## Metadata
 
 Defines the basic settings for the Haiku system.
 
-- **torii_url:** Torii address
-- **rpc_url:** Katana address
-- **world_address:** Dojo world address
-- **relay_url:** Used by E.M. stream
+**torii_url:** Torii address
 
-      Example: `/ip4/127.0.0.1/udp/9090/quic-v1`
-- **database_url:** Name of the DB which will store LLM responses
+**rpc_url:** Katana address
 
-      - Created if doesn't exist
-      - Used to fetch previous memories to enhance prompts
-- **signer_address:** 
-- **signer_public_key:** 
-- **signer_private_key:** 
+**world_address:** Dojo world address
+
+**relay_url:** Used by torii's offchain message stream
+  - Default: `/ip4/127.0.0.1/udp/9090/quic-v1`
+
+**database_url:** Path to the SQLite database file for storing LLM responses
+  - Automatically created if it doesn't exist
+  - Used to store and retrieve previous interactions, enhancing context for future prompts
+  - Default: "haiku.db"
+
+Haiku signs the offchain messages sent to torii to prove its provenance:
+
+**signer_address:** The address associated with Haiku's signer
+
+**signer_public_key:** The public key corresponding to the signer's address
+
+**signer_private_key:** The private key used for signing 
 
 ## LLM
 
 Configures the Language Model (LLM) used for generating Haiku responses
 and the Embedding Model used to store them.
 
-- **model:** "haiku"
+**model:** Name of the model you want to interract with
+- Default: "haiku"
 
-      Used for interacting with a local Ollama model
-- **ai_url:** LLM API endpoint
-- **ai_token:** LLM Bearer Token
-- **vectorization_url:** Embedding Model API endpoint
-- **vectorization_token:** Embedding Model Bearer Token
+**chat_completion_provider:** The chosen model provider for generating responses.
+- Possible options: "ollama" | "openai"
+
+**ai_url:** LLM API endpoint
+
+**ai_token:** LLM Bearer Token
+- Required for OpenAI, leave empty for Ollama
+
+**embedding_provider:** The chosen embedding provider for vectorizing text
+- Possible options: "baai-bge" | "openai"
+
+**vectorization_url:** Embedding Model API endpoint
+- Example: https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5
+
+**vectorization_token:** Embedding Model Bearer Token
 
 ## Database Config
 
 Defines the database configuration used for storing and retrieving LLM responses
 
-- **vector_size:** Size of the Embedding Model vectors
+**vector_size:** Size of the Embedding Model vectors
 
-      Example: "1536" (for OpenAI's 'text-embedding-3-small' model)
-- **number_memory_to_retrieve:** Number of memories to fetch for every new prompt
+  - Example: "1536" (for OpenAI's 'text-embedding-3-small' model)
 
-### Context
+**number_memory_to_retrieve:** Number of memories to fetch for every new prompt
+  - Default: 1
 
-- **story:** Provides context about your game's lore (System)
+## Context
+
+**story:** Provides overarching context about your application or game world
+  - This narrative will be included as input for every prompt, setting the stage for AI-generated content
+  - Example: "In a post-apocalyptic world where nature has reclaimed abandoned cities, survivors navigate through dangerous ruins and lush overgrowth, facing mutated creatures and rival factions."
 
 
 ## Events
 
-
 This section defines the events that trigger Haiku generation.
 Pregenerated using the 'cairo build' command by fetching events from the Manifest
 
-- **tag:** \<Namespace\>-\<Event Model Name\>
+**tag:** \<Namespace\>-\<Event Model Name\>
 
-   ### :warning: **Sections below need to be repeated for each event model** :warning:
+### Prompt
 
-#### Prompt
+**template:** Prompt used to generate the response for this specific event model
 
-   - **template:** Prompt used to generate the response for this specific event model
+### Database Keys
 
-#### Database Keys
+**storage_keys:** Names of the events you want to store this event into
 
-   - **storage_keys:** Names of the events you want to store this event into
-   - **retrieval_keys:** Names of the events you want to retrieve memories from
+**retrieval_keys:** Names of the events you want to retrieve memories from
 
-#### Keys Mapping
+### Keys Mapping
 
-- **key:**
-- **alias:**
+Maps custom keys from your event to aliases, facilitating consistent storage and retrieval across different event types. This mapping should exclude the 'id' field.
+
+- **key:** The original key name as defined in your event structure
+- **alias:** A standardized name used to represent similar entities across different events
+
+- Example: 'player_id' and 'target_entity_id' might both be aliased to 'player'
 
 ![alt text](img/Haiku-red.png)
