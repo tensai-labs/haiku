@@ -37,7 +37,7 @@ Defines the basic settings for the Haiku system.
 - **world_address:** Dojo world address
 - **relay_url:** Used by E.M. stream
 
-      Example: `/ip4/127.0.0.1/udp/9090/quic-v**1**`
+      Example: `/ip4/127.0.0.1/udp/9090/quic-v1`
 - **database_url:** Name of the DB which will store LLM responses
 
       - Created if doesn't exist
