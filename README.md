@@ -56,6 +56,8 @@ The event struct must include these requirements:
 
 You can choose any name for your event struct (replace `YourEventName`) and add any additional fields that your event requires.
 
+⚠️ Currently, Haiku supports a limited set of data types. For a comprehensive list of supported types and information about current limitations, please refer to the "Supported Data Types and Limitations" section in this documentation.
+
 ## Add Haiku dependencies 
 Add the following to your Scarb.toml
 ```
@@ -95,6 +97,30 @@ Arguments:
 ```
 
 Now that your Haiku results are being streamed as offchain messages, you can integrate them into your client application. To help you get started, we've provided example client implementations in the `/examples` folder of this repository. These examples demonstrate various ways to consume and display Haiku messages in different client environments.
+
+# Supported Data Types and Limitations
+
+Haiku events currently have some limitations regarding the data types that can be used for event fields:
+
+1. Numeric Types:
+   - Supported: u8, u16, u32, u64, u128
+   - Not supported: felt252 for numbers (Haiku converts these to short strings)
+
+2. Boolean Type:
+   - Supported: bool
+
+3. String Type:
+   - Supported: felt252 for strings
+
+4. Complex Types:
+   - Not supported: structs, arrays, or other complex data structures
+
+5. Address Type:
+   - Supported: ContractAddress
+
+When defining your event fields, ensure you use these supported types to guarantee proper functionality within the Haiku system. If you need to represent more complex data, consider breaking it down into multiple simple fields or using string representations where appropriate.
+
+Note: This list of supported types may expand in future versions of Haiku. Always refer to the most recent documentation for up-to-date information on supported data types.
 
 # Haiku Configuration
 
