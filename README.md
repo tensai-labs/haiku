@@ -217,9 +217,9 @@ Pregenerated using the 'cairo build' command by fetching events from the Manifes
 
 ### Database Keys
 
-**storage_keys:** Names of the events you want to store this event into
+**storage_keys:** Keys used to store information for future retrieval. These typically correspond to your model's keys. However, for some events, you may not want to link the response to certain keys for future memory retrieval.
 
-**retrieval_keys:** Names of the events you want to retrieve memories from
+**retrieval_keys:** Keys used to fetch relevant memories when creating a new prompt. These typically correspond to your model's keys. These determine which stored information will be included as context for the AI's response.
 
 ### Keys Mapping
 
