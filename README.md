@@ -13,7 +13,6 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
 - [Getting Started](#getting-started)
   - [Install Dojo](#install-dojo)
   - [Install Haiku](#install-haiku)
-  - [Add Haiku to your path](#add-haiku-to-your-path)
   - [Add Haiku events in your project](#add-haiku-events-in-your-project)
   - [Add Haiku dependencies](#add-haiku-dependencies)
   - [Build and migrate your dojo project](#build-and-migrate-you-dojo-project)
@@ -42,9 +41,11 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
 # How It Works
 
 1. Emit custom haiku events from your smart contracts.
-2. The events trigger an LLM chat completion request.
-3. Haiku has access to past events related to the fired event to add context to the response.
-4. LLM responses are streamed back to you leveraging torii offchain messages.
+2. The events triggers Haiku which vectorizes the event model.
+3. Haiku compares the vectorized model to other memories in the vector db using cosine similarity.
+4. The event and the returned memories are put together to create a prompt which is sent to the LLM.
+5. The llm response is streamed back to torii leveraging offchain messages.
+6. The result is vectorized and stored in the vector db as a new memory.
 
 <hr>
 <br>
@@ -59,13 +60,7 @@ Follow the instructions to install Dojo [here](https://book.dojoengine.org/getti
 ## Install Haiku
 
 ```
-todo: add haiku to releases and curl ...
-```
-
-## Add Haiku to your path
-
-```
-todo
+./scripts/install.sh
 ```
 
 ## Add Haiku events in your project
@@ -205,11 +200,12 @@ Configures the Language Model (LLM) used for generating Haiku responses and the 
 
 | Key                        | Description                                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `model`                    | Name of the model you want to interact with<br>Default: `"haiku"`                                             |
 | `chat_completion_provider` | The chosen model provider for generating responses<br>Possible options: `"ollama"` \| `"openai"`              |
+| `ai_model`                 | Name of the model from the provider you want to interact with                                                 |
 | `ai_url`                   | LLM API endpoint                                                                                              |
 | `ai_token`                 | LLM Bearer Token<br>Required for OpenAI, leave empty for Ollama                                               |
 | `embedding_provider`       | The chosen embedding provider for vectorizing text<br>Possible options: `"baai-bge"` \| `"openai"`            |
+| `embedding_model`          | Name of the model from the provider for vectorizing text<br>Example: `"text-embedding-3-small"`               |
 | `embedding_url`            | Embedding Model API endpoint<br>Example: `https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5` |
 | `embedding_token`          | Embedding Model Bearer Token                                                                                  |
 
