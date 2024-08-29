@@ -1,6 +1,9 @@
-use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
-use crate::types::llm_client::provider_manager::{ProviderManager, ProviderTrait};
+use tokio_retry::strategy::{jitter, ExponentialBackoff};
+use tokio_retry::Retry;
+
 use crate::types::config_types::Config;
+use crate::types::llm_client::provider_manager::{ProviderManager, ProviderTrait};
+use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
 
 pub struct Provider {
     chat_provider: Box<dyn ChatCompletionProvider>,
@@ -18,10 +21,18 @@ impl Provider {
     }
 
     pub async fn request_chat_completion(&self, text: &str) -> eyre::Result<String> {
-        self.chat_provider.request_chat_completion(text).await
+        let retry_closure = || async { self.chat_provider.request_chat_completion(text).await };
+
+        let retry_strategy = ExponentialBackoff::from_millis(100).map(jitter).take(30);
+
+        Retry::spawn(retry_strategy, retry_closure).await
     }
 
     pub async fn request_embedding(&self, text: &str) -> eyre::Result<Vec<f32>> {
-        self.embedding_provider.request_embedding(text).await
+        let retry_closure = || async { self.embedding_provider.request_embedding(text).await };
+
+        let retry_strategy = ExponentialBackoff::from_millis(100).map(jitter).take(30);
+
+        Retry::spawn(retry_strategy, retry_closure).await
     }
 }

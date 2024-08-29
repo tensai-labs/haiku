@@ -7,7 +7,7 @@ use torii_client::client::Client;
 
 use crate::{
     types::{config_types::Config, llm_client::provider::Provider, PromptMessage},
-    utils::{db_manager::DbManager, prompt_event_message::PromptEventMessage},
+    utils::{db_manager::DbManager, prompt_event_message::PromptOffchainMessage},
 };
 
 pub struct PromptHandler {
