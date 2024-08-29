@@ -1,17 +1,6 @@
 
 ![alt text](img/Haiku-blue.png)
 
-<div align="center">
-
- <sup><sub>I write, erase, rewrite<sup><sub>
-
- <sup><sub>Erase again, and then<sup><sub>
-
- <sup><sub>A poppy blooms.<sup><sub>
-
- <sup><sub>- Katsushika Hokusai -<sup><sub>
-</div>
-
 # Haiku: AI Content Generation for Dojo Games and Applications
 
 [Dojo](https://github.com/dojoengine/dojo) provides a user-friendly platform for creating verifiable Games, Autonomous Worlds, and various Applications that are natively composable, extensible, permissionless and persistent.
@@ -229,5 +218,25 @@ Maps custom keys from your event to aliases, facilitating consistent storage and
 - **alias:** A standardized name used to represent similar entities across different events
 
 - Example: 'player_id' and 'target_entity_id' might both be aliased to 'player'
+
+<br><br>
+ <br><br>
+ <br><br>
+<div align="center" style="font-size: 8px;">
+
+<i>
+    I write, erase, rewrite<br><br>
+    Erase again, and then<br><br>
+    A poppy blooms.<br><br>
+   
+</i>
+ - Katsushika Hokusai -
+ 
+</div>
+
+ <br><br>
+ <br><br>
+ <br><br>
+
 
 ![alt text](img/Haiku-red.png)
