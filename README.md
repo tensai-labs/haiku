@@ -244,7 +244,7 @@ This section defines the events that trigger Haiku generation. Pregenerated usin
 | Key              | Description                                                                                                                                                                                                        |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `storage_keys`   | Keys used to store information for future retrieval. These typically correspond to your model's keys. However, for some events, you may not want to link the response to certain keys for future memory retrieval. |
-| `retrieval_keys` | Keys used to fetch relevant memories when creating a new prompt. These typically correspond to your model's keys. These determine which stored information will be included as context for the AI's response.      |
+| `retrieval_keys` | Keys used to fetch relevant memories when creating a new prompt. These typically correspond to your model's keys. These determine which stored information will be included as context for the AI's response. ⚠️ **Uses all of the memories if left empty** |
 
 ### Keys Mapping
 
