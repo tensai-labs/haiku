@@ -1,6 +1,7 @@
 use tokio_retry::strategy::{jitter, ExponentialBackoff};
 use tokio_retry::Retry;
 
+use crate::secrets::Secrets;
 use crate::types::config_types::Config;
 use crate::types::llm_client::provider_manager::{ProviderManager, ProviderTrait};
 use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
@@ -11,12 +12,12 @@ pub struct Provider {
 }
 
 impl Provider {
-    pub fn new(config: &Config) -> eyre::Result<Self> {
+    pub fn new(config: &Config, secrets: &Secrets) -> eyre::Result<Self> {
         let provider_manager = ProviderManager;
 
         Ok(Self {
-            chat_provider: provider_manager.create_chat_provider(config)?,
-            embedding_provider: provider_manager.create_embedding_provider(config)?,
+            chat_provider: provider_manager.create_chat_provider(config, secrets)?,
+            embedding_provider: provider_manager.create_embedding_provider(config, secrets)?,
         })
     }
 

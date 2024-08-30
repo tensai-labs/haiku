@@ -43,8 +43,6 @@ pub struct Metadata {
     pub relay_url: String,
     pub database_url: String,
     pub world_address: String,
-    pub signer_address: String,
-    pub signer_private_key: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
@@ -52,11 +50,9 @@ pub struct Llm {
     pub chat_completion_provider: String,
     pub embedding_provider: String,
     pub embedding_model: String,
-    pub ai_model: String,
-    pub ai_url: String,
-    pub ai_token: String,
+    pub chat_completion_model: String,
+    pub chat_completion_url: String,
     pub embedding_url: String,
-    pub embedding_token: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
