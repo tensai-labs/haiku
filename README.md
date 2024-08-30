@@ -107,7 +107,7 @@ build-external-contracts = [ "haiku_event::PromptMessage" ]
 For instructions on how to [build](https://book.dojoengine.org/toolchain/sozo/project-commands/build) and [migrate](https://book.dojoengine.org/toolchain/sozo/project-commands/migrate) your Dojo project, please refer to the official Dojo documentation. These steps are essential for preparing your project for use with Haiku.
 
 ## Launch torii
-Then follow the torii launch instructions [here](https://book.dojoengine.org/toolchain/torii/reference).
+Follow the torii launch instructions [here](https://book.dojoengine.org/toolchain/torii/reference).
 
 ## Generate Your Haiku Configuration Template
 
