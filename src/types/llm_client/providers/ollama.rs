@@ -25,9 +25,9 @@ impl ChatCompletionProvider for OllamaProvider {
     async fn request_chat_completion(&self, text: &str) -> Result<String> {
         let response = self
             .client
-            .post(&self.config.haiku.llm.ai_url)
+            .post(&self.config.haiku.llm.chat_completion_url)
             .json(&serde_json::json!({
-                "model": self.config.haiku.llm.ai_model,
+                "model": self.config.haiku.llm.chat_completion_model,
                 "prompt": text,
                 "stream": false
             }))

@@ -185,11 +185,10 @@ mod tests {
         config.haiku.metadata.database_url = ":memory:".to_string();
         config.haiku.llm.chat_completion_provider = "ollama".to_string();
         config.haiku.llm.embedding_provider = "baai-bge".to_string();
-        config.haiku.llm.ai_model = "haiku".to_string();
-        config.haiku.llm.ai_url = "http://localhost:11434/api/generate".to_string();
+        config.haiku.llm.chat_completion_model = "haiku".to_string();
+        config.haiku.llm.chat_completion_url = "http://localhost:11434/api/generate".to_string();
         config.haiku.llm.embedding_url =
             "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5".to_string();
-        config.haiku.llm.embedding_token = "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".to_string();
         config.haiku.db_config.vector_size = "4".to_string();
         config.haiku.db_config.number_memory_to_retrieve = "1".to_string();
         config.haiku.context.story = "The game is a dungeon crawler.".to_string();

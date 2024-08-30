@@ -9,13 +9,15 @@ use torii_grpc::types::{EntityKeysClause, KeysClause};
 
 use crate::{
     actors::{event_handler::EventHandler, prompt_handler::PromptHandler},
+    secrets::Secrets,
     types::config_types::Config,
-    utils::db_manager::DbManager,
+    utils::{constants::CHANNEL_BUFFER_SIZE, db_manager::DbManager},
 };
 
 #[derive(Debug, Args)]
 pub struct RunSubcommand {
     /// Path to the configuration file
+    #[arg(default_value = "haiku.toml")]
     pub config_file_path: String,
 }
 
@@ -23,9 +25,9 @@ impl RunSubcommand {
     pub async fn execute(self) {
         let config = Config::from_toml(self.config_file_path).expect("Failed to load config");
 
-        config.ensure_valid_configuration();
+        let secrets = Secrets::from_dotenv(&config);
 
-        let services_init_ret = Self::init_services(config).await;
+        let services_init_ret = Self::init_services(config, secrets).await;
 
         if services_init_ret.is_err() {
             tracing::error!(
@@ -35,7 +37,7 @@ impl RunSubcommand {
         }
     }
 
-    async fn init_services(config: Config) -> eyre::Result<()> {
+    async fn init_services(config: Config, secrets: Secrets) -> eyre::Result<()> {
         let database = DbManager::init_db(&config)
             .await
             .expect("Failed to initialize database");
@@ -73,20 +75,18 @@ impl RunSubcommand {
             .await
             .unwrap();
 
-        let (prompt_sender, prompt_receiver) = mpsc::channel(100);
+        let (prompt_sender, prompt_receiver) = mpsc::channel(CHANNEL_BUFFER_SIZE);
 
-        let event_handler = EventHandler::new(prompt_sender, config.clone());
+        let mut event_handler = EventHandler::new(prompt_sender, config.clone());
 
         let mut prompt_handler =
-            PromptHandler::new(prompt_receiver, config.clone(), database, client);
+            PromptHandler::new(prompt_receiver, config.clone(), database, client, secrets);
 
         tokio::spawn(async move {
             event_handler.run(rcv).await;
         });
 
         prompt_handler.run().await;
-
-        tracing::info!("All services running 🚀");
         Ok(())
     }
 }

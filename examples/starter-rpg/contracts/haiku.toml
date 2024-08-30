@@ -8,22 +8,18 @@ world_address = "0x34d4e2fcecd511a3286e6acc3e0108ff5d6b7e9290876f988a76163ade950
 relay_url = "/ip4/127.0.0.1/udp/9090/quic-v1"
 database_url = "haiku.db"
 signer_address = "0x0101010101010101010101010101010101010101010101010101010101010101"
-signer_public_key = "0x0101010101010101010101010101010101010101010101010101010101010101"
-signer_private_key = "0x0101010101010101010101010101010101010101010101010101010101010101"
 
 [haiku.context]
 story = """This is the japanese feodal era, the player is a samurai. You are the companion of the player, talk to him like a friend. Use as many swear words as possible. Keep your answers concise, maximum 2 sentences. You will receive the most relevant memory of our past discussions, use them to improve your answer."""
 
 [haiku.llm]
 chat_completion_provider = "openai"
-ai_model = "gpt-4o-mini"
-ai_url = "https://api.openai.com/v1/chat/completions"
-ai_token = ""
+chat_completion_model = "gpt-4o-mini"
+chat_completion_url = "https://api.openai.com/v1/chat/completions"
 
 embedding_provider = "openai"
 embedding_model = "text-embedding-3-small"
 embedding_url = "https://api.openai.com/v1/embeddings"
-embedding_token = ""
 
 [haiku.db_config]
 vector_size = "1536"

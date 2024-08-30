@@ -6,6 +6,7 @@ use tokio_rusqlite::Connection;
 use torii_client::client::Client;
 
 use crate::{
+    secrets::Secrets,
     types::{config_types::Config, llm_client::provider::Provider, PromptMessage},
     utils::{db_manager::DbManager, prompt_event_message::PromptOffchainMessage},
 };
@@ -16,6 +17,7 @@ pub struct PromptHandler {
     pub database: Connection,
     pub provider_manager: Provider,
     pub torii_client: Client,
+    pub secrets: Secrets,
 }
 
 impl PromptHandler {
@@ -24,13 +26,16 @@ impl PromptHandler {
         config: Config,
         database: Connection,
         torii_client: Client,
+        secrets: Secrets,
     ) -> Self {
         Self {
             prompt_receiver,
             config: config.clone(),
             database,
-            provider_manager: Provider::new(&config).expect("Failed to initialize LLM client"),
+            provider_manager: Provider::new(&config, &secrets)
+                .expect("Failed to initialize LLM client"),
             torii_client,
+            secrets,
         }
     }
 
@@ -113,8 +118,8 @@ impl PromptHandler {
     ) -> eyre::Result<()> {
         self.torii_client
             .publish_message(event_message.to_message(
-                Felt::from_str(&self.config.haiku.metadata.signer_address)?,
-                &Felt::from_str(&self.config.haiku.metadata.signer_private_key)?,
+                Felt::from_str(&self.secrets.signer_address)?,
+                &Felt::from_str(&self.secrets.signer_private_key)?,
             )?)
             .await?;
 

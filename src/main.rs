@@ -1,12 +1,7 @@
-mod actors;
-mod subcommands;
-mod types;
-mod utils;
-
 use clap::Parser;
 use tracing_subscriber::EnvFilter;
 
-use crate::subcommands::{Args, Subcommands};
+use haiku::subcommands::{Args, Subcommands};
 
 #[tokio::main]
 async fn main() {
