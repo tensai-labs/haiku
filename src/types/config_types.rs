@@ -21,7 +21,40 @@ impl Config {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            haiku: Haiku {
+                name: "haiku".to_string(),
+                metadata: Metadata {
+                    torii_url: "http://localhost:8080/".to_string(),
+                    rpc_url: "http://localhost:5050/".to_string(),
+                    relay_url: "/ip4/127.0.0.1/udp/9090/quic-v1".to_string(),
+                    database_url: "torii.db".to_string(),
+                    world_address: "".to_string(),
+                },
+                context: Context {
+                    story: "Replace this text by a compelling narrative that encapsulates the overarching theme, setting, and key elements of your game world. This should provide a rich, immersive context for all subsequent interactions and events.".to_string(),
+                },
+                llm: Llm {
+					chat_completion_provider: "openai".to_string(),
+                    chat_completion_model: "gpt-4o-mini".to_string(),
+                    chat_completion_url: "https://api.openai.com/v1/chat/completions".to_string(),
+                    embedding_provider: "openai".to_string(),
+                    embedding_model: "text-embedding-3-small".to_string(),
+                    embedding_url: "https://api.openai.com/v1/embeddings".to_string(),
+                },
+                db_config: DbConfig {
+                    vector_size: "1536".to_string(),
+                    number_memory_to_retrieve: "1".to_string(),
+                },
+            },
+            events: vec![],
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
     pub haiku: Haiku,
     pub events: Vec<Event>,
@@ -48,10 +81,10 @@ pub struct Metadata {
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Llm {
     pub chat_completion_provider: String,
-    pub embedding_provider: String,
-    pub embedding_model: String,
     pub chat_completion_model: String,
     pub chat_completion_url: String,
+    pub embedding_provider: String,
+    pub embedding_model: String,
     pub embedding_url: String,
 }
 
