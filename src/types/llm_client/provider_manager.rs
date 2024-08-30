@@ -39,8 +39,9 @@ impl ProviderTrait for ProviderManager {
         secrets: &Secrets,
     ) -> eyre::Result<Box<dyn EmbeddingProvider>> {
         match config.haiku.llm.embedding_provider.as_str() {
-            "baai-bge" => Ok(Box::new(BaaiBGEProvider::new(config, secrets))),
+            "ollama" => Ok(Box::new(OllamaProvider::new(config))),
             "openai" => Ok(Box::new(OpenAIProvider::new(config, secrets))),
+            "baai-bge" => Ok(Box::new(BaaiBGEProvider::new(config, secrets))),
 
             _ => Err(eyre::eyre!("Unsupported embedding provider")),
         }

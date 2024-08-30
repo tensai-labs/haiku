@@ -207,7 +207,7 @@ Configures the Language Model (LLM) used for generating Haiku responses and the 
 | `chat_completion_model`    | Name of the model from the provider you want to interact with                                                 |
 | `chat_completion_url`      | LLM API endpoint                                                                                              |
 | `chat_completion_token`    | LLM Bearer Token<br>Required for OpenAI, leave empty for Ollama                                               |
-| `embedding_provider`       | The chosen embedding provider for vectorizing text<br>Possible options: `"baai-bge"` \| `"openai"`            |
+| `embedding_provider`       | The chosen embedding provider for vectorizing text<br>Possible options: `"ollama"` \| `"openai"` \| `"baai-bge"`|
 | `embedding_model`          | Name of the model from the provider for vectorizing text<br>Example: `"text-embedding-3-small"`               |
 | `embedding_url`            | Embedding Model API endpoint<br>Example: `https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5` |
 | `embedding_token`          | Embedding Model Bearer Token                                                                                  |
