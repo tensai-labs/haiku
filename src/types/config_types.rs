@@ -49,6 +49,20 @@ impl Config {
             self.haiku.llm.embedding_url, "",
             "Embedding URL cannot be empty."
         );
+
+        if self.haiku.llm.embedding_provider == "openai" {
+            assert_ne!(
+                self.haiku.llm.embedding_token, "",
+                "Missing API key for OpenAI embedding"
+            );
+        }
+
+        if self.haiku.llm.chat_completion_provider == "openai" {
+            assert_ne!(
+                self.haiku.llm.ai_token, "",
+                "Missing API key for OpenAI chat completion"
+            );
+        }
     }
 }
 
