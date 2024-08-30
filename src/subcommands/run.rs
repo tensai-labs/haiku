@@ -23,6 +23,8 @@ impl RunSubcommand {
     pub async fn execute(self) {
         let config = Config::from_toml(self.config_file_path).expect("Failed to load config");
 
+        config.ensure_valid_configuration();
+
         let services_init_ret = Self::init_services(config).await;
 
         if services_init_ret.is_err() {

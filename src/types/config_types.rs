@@ -19,6 +19,37 @@ impl Config {
         std::fs::write(config_file_path, content)?;
         Ok(())
     }
+
+    pub fn ensure_valid_configuration(&self) {
+        assert_ne!(
+            self.haiku.db_config.vector_size, "0",
+            "Vector size cannot be zero."
+        );
+
+        assert_ne!(
+            self.haiku.llm.chat_completion_provider, "",
+            "Chat completion provider cannot be empty."
+        );
+
+        assert_ne!(self.haiku.llm.ai_model, "", "AI model cannot be empty.");
+
+        assert_ne!(self.haiku.llm.ai_url, "", "AI URL cannot be empty.");
+
+        assert_ne!(
+            self.haiku.llm.embedding_provider, "",
+            "Embedding provider cannot be empty."
+        );
+
+        assert_ne!(
+            self.haiku.llm.embedding_model, "",
+            "Embedding model cannot be empty."
+        );
+
+        assert_ne!(
+            self.haiku.llm.embedding_url, "",
+            "Embedding URL cannot be empty."
+        );
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
