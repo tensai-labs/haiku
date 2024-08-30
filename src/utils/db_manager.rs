@@ -143,7 +143,10 @@ impl DbManager {
                     }
                 }
 
-                let query = format!(
+                let query = if values.is_empty() {
+                    format!("SELECT content FROM description ORDER BY vec_distance_cosine((SELECT vector FROM embedding WHERE rowid = description.rowid), ?) ASC LIMIT {limit}")
+                } else {
+                    format!(
                     "SELECT content 
                         FROM description 
                         WHERE rowid IN ({}) 
@@ -153,7 +156,7 @@ impl DbManager {
                         ) ASC 
                         LIMIT {limit}",
                     values.join(","),
-                );
+                )};
 
                 let vector_bytes: Vec<u8> = query_embedding
                     .iter()
