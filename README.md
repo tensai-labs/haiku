@@ -59,8 +59,14 @@ Follow the instructions to install Dojo [here](https://book.dojoengine.org/getti
 
 ## Install Haiku
 
+1. For the latest release:
 ```
-curl https://raw.githubusercontent.com/edisontim/haiku/main/scripts/install.sh | bash
+   curl -sSL https://raw.githubusercontent.com/edisontim/haiku/main/scripts/install.sh | bash
+```
+
+2. For a specific version:
+```
+   curl -sSL https://raw.githubusercontent.com/edisontim/haiku/main/scripts/install.sh | bash -s -- "v0.0.2"
 ```
 
 ## Add Haiku events in your project
