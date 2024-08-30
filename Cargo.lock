@@ -2229,8 +2229,8 @@ dependencies = [
 
 [[package]]
 name = "dojo-lang"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "anyhow",
  "cainome",
@@ -2280,8 +2280,8 @@ dependencies = [
 
 [[package]]
 name = "dojo-types"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "cainome",
  "crypto-bigint",
@@ -2298,8 +2298,8 @@ dependencies = [
 
 [[package]]
 name = "dojo-utils"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "anyhow",
  "futures",
@@ -2311,8 +2311,8 @@ dependencies = [
 
 [[package]]
 name = "dojo-world"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3910,7 +3910,7 @@ dependencies = [
 
 [[package]]
 name = "haiku"
-version = "0.1.0"
+version = "0.0.2"
 dependencies = [
  "async-trait",
  "camino",
@@ -8343,8 +8343,8 @@ dependencies = [
 
 [[package]]
 name = "sozo-ops"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -9556,8 +9556,8 @@ checksum = "ea68304e134ecd095ac6c3574494fc62b909f416c4fca77e440530221e549d3d"
 
 [[package]]
 name = "torii-client"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "async-trait",
  "crypto-bigint",
@@ -9585,8 +9585,8 @@ dependencies = [
 
 [[package]]
 name = "torii-core"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -9622,8 +9622,8 @@ dependencies = [
 
 [[package]]
 name = "torii-grpc"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "bytes",
  "crypto-bigint",
@@ -9663,8 +9663,8 @@ dependencies = [
 
 [[package]]
 name = "torii-relay"
-version = "1.0.0-alpha.8"
-source = "git+https://github.com/Larkooo/dojo?branch=fix-from-model#779aba4fa13af7e61024618ce6de781faa8c16d8"
+version = "1.0.0-alpha.9"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "anyhow",
  "async-trait",

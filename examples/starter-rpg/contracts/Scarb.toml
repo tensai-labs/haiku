@@ -10,8 +10,8 @@ sierra-replace-ids = true
 migrate = "sozo build && sozo migrate apply"
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.8" }
-haiku_event = { git = "https://github.com/edisontim/haiku" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.9" }
+haiku_event = { git = "https://github.com/edisontim/haiku", tag = "v0.0.3" }
 
 [[target.dojo]]
 build-external-contracts = [ "haiku_event::PromptMessage" ]

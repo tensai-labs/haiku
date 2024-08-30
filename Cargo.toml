@@ -1,6 +1,6 @@
 [package]
 name = "haiku"
-version = "0.1.0"
+version = "0.0.2"
 authors = ["my name <my@email.address>"]
 edition = "2018"
 
@@ -30,11 +30,11 @@ async-trait = {version = "0.1.81", default-features = false}
 # starknet / dojo
 starknet = { version = "0.11.0" }
 starknet-crypto = { version = "0.7.0", default-features = false }
-dojo-types = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
-torii-client = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
-torii-grpc = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
-torii-relay = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
-dojo-world = { git = "https://github.com/Larkooo/dojo", branch = "fix-from-model" }
+dojo-types = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.9" }
+torii-client = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.9" }
+torii-grpc = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.9" }
+torii-relay = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.9" }
+dojo-world = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.9" }
 scarb = { git = "https://github.com/software-mansion/scarb", tag = "v2.7.0" }
 sqlite-vec = {version = "0.1.1", default-features = false}
 
