@@ -19,6 +19,7 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
   - [Generate Your Haiku Configuration Template](#generate-your-haiku-configuration-template)
   - [Complete the Haiku Configuration Template](#complete-the-haiku-configuration-template)
   - [Run Haiku](#run-haiku)
+- [Supported AI Models](#supported-ai-models)
 - [Supported Data Types and Limitations](#supported-data-types-and-limitations)
 - [Haiku Configuration](#haiku-configuration)
   - [Metadata](#metadata)
