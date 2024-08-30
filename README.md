@@ -19,6 +19,7 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
   - [Generate Your Haiku Configuration Template](#generate-your-haiku-configuration-template)
   - [Complete the Haiku Configuration Template](#complete-the-haiku-configuration-template)
   - [Run Haiku](#run-haiku)
+- [Supported AI Models](#supported-ai-models)
 - [Supported Data Types and Limitations](#supported-data-types-and-limitations)
 - [Haiku Configuration](#haiku-configuration)
   - [Metadata](#metadata)
@@ -36,15 +37,15 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
 - Seamless integration with Dojo projects.
 - AI triggered by contract events.
 - Results stored in torii offchain messages.
-- Simple configuration and prompt engineering through the haiku `config.toml` file.
+- Simple configuration and prompt engineering through `haiku.toml` file.
 
 # How It Works
 
-1. Emit custom haiku events from your smart contracts.
+1. Emit custom Haiku events from your smart contracts.
 2. The events triggers Haiku which vectorizes the event model.
-3. Haiku compares the vectorized model to other memories in the vector db using cosine similarity.
+3. Haiku compares the vectorized model to other memories in the Haiku vector db using cosine similarity.
 4. The event and the returned memories are put together to create a prompt which is sent to the LLM.
-5. The llm response is streamed back to torii leveraging offchain messages.
+5. The LLM response is streamed back to torii leveraging offchain messages.
 6. The result is vectorized and stored in the vector db as a new memory.
 
 <hr>
@@ -127,6 +128,8 @@ Arguments:
   [OUTPUT_CONFIG_FILE_PATH]  Path to output config file [default: ./config.toml]
 ```
 
+The default path for the Haiku configuration file is `haiku.toml`. When you run the `haiku build` command, it will generate this configuration file along with a `.env.haiku` file. The `.env.haiku` file is where you'll need to specify your private keys and other sensitive information.
+
 ## Complete the Haiku Configuration Template
 
 After generating the initial Haiku configuration template, you'll need to fill in the necessary details to customize it for your project. This step is crucial for ensuring that Haiku integrates correctly with your Dojo setup and functions as intended.
@@ -144,6 +147,16 @@ Arguments:
 ```
 
 Now that your Haiku results are being streamed as offchain messages, you can integrate them into your client application. To help you get started, we've provided example client implementations in the `/examples` folder of this repository. These examples demonstrate various ways to consume and display Haiku messages in different client environments.
+
+<hr>
+<br>
+<br>
+
+# Supported AI Models 
+
+Haiku currently supports two AI model standards:
+1. OpenAI: A leading provider of advanced language models and AI services.
+2. Ollama: A platform that simplifies the process of running open-source LLMs locally. Ollama currently supports over 100 open-source models, which can be found at https://ollama.com/library.
 
 <hr>
 <br>
@@ -195,14 +208,6 @@ Defines the basic settings for the Haiku system.
 | `relay_url`     | Used by torii's offchain message stream<br>Default: `/ip4/127.0.0.1/udp/9090/quic-v1`                                                                                                                                          |
 | `database_url`  | Path to the SQLite database file for storing LLM responses<br>- Automatically created if it doesn't exist<br>- Used to store and retrieve previous interactions, enhancing context for future prompts<br>Default: `"haiku.db"` |
 
-Haiku signs the offchain messages sent to torii to prove its provenance:
-
-| Key                  | Description                                          |
-| -------------------- | ---------------------------------------------------- |
-| `signer_address`     | The address associated with Haiku's signer           |
-| `signer_public_key`  | The public key corresponding to the signer's address |
-| `signer_private_key` | The private key used for signing                     |
-
 ## LLM
 
 Configures the Language Model (LLM) used for generating Haiku responses and the Embedding Model used to store them.
@@ -212,11 +217,9 @@ Configures the Language Model (LLM) used for generating Haiku responses and the 
 | `chat_completion_provider` | The chosen model provider for generating responses<br>Possible options: `"ollama"` \| `"openai"`              |
 | `chat_completion_model`    | Name of the model from the provider you want to interact with                                                 |
 | `chat_completion_url`      | LLM API endpoint                                                                                              |
-| `chat_completion_token`    | LLM Bearer Token<br>Required for OpenAI, leave empty for Ollama                                               |
 | `embedding_provider`       | The chosen embedding provider for vectorizing text<br>Possible options: `"ollama"` \| `"openai"` \| `"baai-bge"`|
 | `embedding_model`          | Name of the model from the provider for vectorizing text<br>Example: `"text-embedding-3-small"`               |
 | `embedding_url`            | Embedding Model API endpoint<br>Example: `https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5` |
-| `embedding_token`          | Embedding Model Bearer Token                                                                                  |
 
 ## Database Config
 
@@ -243,7 +246,7 @@ This section defines the events that trigger Haiku generation. Pregenerated usin
 
 | Key        | Description                                                        |
 | ---------- | ------------------------------------------------------------------ |
-| `template` | Prompt used to generate the response for this specific event model |
+| `template` | Prompt used to generate the response for this specific event model.<br>Example: `"You're ${player_name}, a role ${player_role} samurai. You've healed during a battle with a role ${dungeon_role} monster. His remaining health is ${dungeon_health}, yours is ${player_health}."`|
 
 ### Database Keys
 
