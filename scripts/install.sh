@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-echo Installing latest dojo...
-dojoup --branch main
-
 echo Installing haiku...
 
 BASE_DIR=${XDG_CONFIG_HOME:-$HOME}

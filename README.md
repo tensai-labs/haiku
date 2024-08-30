@@ -55,7 +55,7 @@ Haiku empowers developers to seamlessly integrate AI-driven content generation i
 
 ## Install Dojo
 
-Follow the instructions to install Dojo [here](https://book.dojoengine.org/getting-started).
+Follow the instructions to install Dojo [here](https://book.dojoengine.org/getting-started). You need at least v1.0.0-alpha.9.
 
 ## Install Haiku
 
