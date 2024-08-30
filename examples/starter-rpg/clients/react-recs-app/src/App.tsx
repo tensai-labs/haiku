@@ -5,7 +5,7 @@ import { getEntityIdFromKeys } from "@dojoengine/utils";
 import { useDojo } from "./dojo/useDojo";
 import { Button } from "./components/ui/button";
 import * as torii from "@dojoengine/torii-client";
-import { HaikuMessages } from "./HaikuMessages";
+import { HaikuMessages } from "./components/HaikuMessages";
 
 function App() {
   const {
