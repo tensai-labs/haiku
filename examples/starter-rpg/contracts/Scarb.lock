@@ -4,7 +4,7 @@ version = 1
 [[package]]
 name = "dojo"
 version = "1.0.0-alpha.4"
-source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.8#d31f81e6aeae01c6bbe7bd5879a5d33551082bcb"
+source = "git+https://github.com/dojoengine/dojo?tag=v1.0.0-alpha.9#e42ce0c220a59d75c5b08e87a81de12cfdc27a55"
 dependencies = [
  "dojo_plugin",
 ]
@@ -17,7 +17,7 @@ source = "git+https://github.com/dojoengine/dojo?rev=f15def33#f15def330c0d099e79
 [[package]]
 name = "haiku_event"
 version = "0.1.0"
-source = "git+https://github.com/edisontim/haiku#3417ef1c7fcb74bdda10448de5096c01a822147d"
+source = "git+https://github.com/edisontim/haiku#7d08f9fe80b3d8cf476b326f872a9408bcef7c9d"
 dependencies = [
  "dojo",
 ]

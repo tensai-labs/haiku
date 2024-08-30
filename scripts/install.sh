@@ -12,7 +12,7 @@ HAIKU_BIN_DIR="$HAIKU_DIR/bin"
 HAIKU_MAN_DIR="$HAIKU_DIR/share/man/man1"
 
 # Allow specifying a custom tag via command line argument
-TAG=${1:-"v0.0.2"}  # Default to v0.0.2 if no argument is provided
+TAG=${1:-"v0.0.3"}  # Default to v0.0.2 if no argument is provided
 
 # Update the BIN_URL to use the specified tag
 BIN_URL="https://github.com/edisontim/haiku/releases/download/$TAG/haiku"
