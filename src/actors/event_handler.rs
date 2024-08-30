@@ -9,6 +9,7 @@ use torii_grpc::{client::EntityUpdateStreaming, types::schema::Entity};
 pub struct EventHandler {
     pub prompt_sender: mpsc::Sender<PromptMessage>,
     pub config: Config,
+    pub is_first_event: bool,
 }
 
 impl EventHandler {
@@ -16,20 +17,29 @@ impl EventHandler {
         Self {
             prompt_sender,
             config,
+            is_first_event: true,
         }
     }
 
-    pub async fn run(&self, mut rcv: EntityUpdateStreaming) {
+    pub async fn run(&mut self, mut rcv: EntityUpdateStreaming) {
         while let Some(Ok((_, entity))) = rcv.next().await {
-            tracing::debug!("Received event");
             let ret = self.handle_event(entity).await;
-            if ret.is_err() {
+
+            if ret.is_err() && !self.is_first_event {
                 tracing::error!("Error handling event: {:?}", ret.unwrap_err());
+            }
+
+            if self.is_first_event {
+                self.is_first_event = false;
             }
         }
     }
 
     pub async fn handle_event(&self, entity: Entity) -> eyre::Result<()> {
+        if !self.is_first_event {
+            tracing::debug!("Received event");
+        }
+
         if entity.models.len() == 0 {
             return Err(eyre!("Empty models for event or first event received"));
         }

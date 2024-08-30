@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::utils::constants::HAIKU_ENV_FILE;
+
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct Secrets {
     pub signer_address: String,
@@ -10,7 +12,7 @@ pub struct Secrets {
 
 impl Secrets {
     pub fn from_dotenv() -> Self {
-        dotenvy::dotenv().ok();
+        dotenvy::from_filename(std::env::current_dir().unwrap().join(HAIKU_ENV_FILE)).ok();
         match envy::from_env::<Secrets>() {
             Ok(config) => config,
             Err(error) => panic!("{:#?}", error),

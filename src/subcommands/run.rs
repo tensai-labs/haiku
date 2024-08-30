@@ -11,7 +11,7 @@ use crate::{
     actors::{event_handler::EventHandler, prompt_handler::PromptHandler},
     secrets::Secrets,
     types::config_types::Config,
-    utils::db_manager::DbManager,
+    utils::{constants::CHANNEL_BUFFER_SIZE, db_manager::DbManager},
 };
 
 #[derive(Debug, Args)]
@@ -75,9 +75,9 @@ impl RunSubcommand {
             .await
             .unwrap();
 
-        let (prompt_sender, prompt_receiver) = mpsc::channel(100);
+        let (prompt_sender, prompt_receiver) = mpsc::channel(CHANNEL_BUFFER_SIZE);
 
-        let event_handler = EventHandler::new(prompt_sender, config.clone());
+        let mut event_handler = EventHandler::new(prompt_sender, config.clone());
 
         let mut prompt_handler =
             PromptHandler::new(prompt_receiver, config.clone(), database, client, secrets);
