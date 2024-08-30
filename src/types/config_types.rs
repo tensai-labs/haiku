@@ -8,6 +8,8 @@ impl Config {
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let content = std::fs::read_to_string(config_file_path)?;
         let config: Config = toml::from_str(&content)?;
+        config.ensure_valid_configuration();
+
         Ok(config)
     }
 
@@ -18,6 +20,43 @@ impl Config {
         let content = toml::to_string_pretty(self)?;
         std::fs::write(config_file_path, content)?;
         Ok(())
+    }
+
+    fn ensure_valid_configuration(&self) {
+        assert_ne!(
+            self.haiku.db_config.vector_size, "0",
+            "Vector size cannot be zero."
+        );
+
+        assert_ne!(
+            self.haiku.llm.chat_completion_provider, "",
+            "Chat completion provider cannot be empty."
+        );
+
+        assert_ne!(
+            self.haiku.llm.chat_completion_model, "",
+            "AI model cannot be empty."
+        );
+
+        assert_ne!(
+            self.haiku.llm.chat_completion_url, "",
+            "AI URL cannot be empty."
+        );
+
+        assert_ne!(
+            self.haiku.llm.embedding_provider, "",
+            "Embedding provider cannot be empty."
+        );
+
+        assert_ne!(
+            self.haiku.llm.embedding_model, "",
+            "Embedding model cannot be empty."
+        );
+
+        assert_ne!(
+            self.haiku.llm.embedding_url, "",
+            "Embedding URL cannot be empty."
+        );
     }
 }
 

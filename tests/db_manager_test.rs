@@ -27,7 +27,7 @@ mod tests {
 
         let mut i = 0;
         while i < 5 {
-            let rows = DbManager::store_memory(
+            DbManager::store_memory(
                 &database,
                 text.clone(),
                 float_vec.clone(),
@@ -36,7 +36,6 @@ mod tests {
             .await
             .expect("Failed to insert embedding and text");
 
-            let (left, right) = rows;
             i += 1;
         }
 
@@ -122,6 +121,57 @@ mod tests {
             float_vec,
             vec![0.4, 0.3, 0.2, 0.1],
             "Values should be identical"
+        );
+    }
+
+    #[tokio::test]
+    async fn retrieve_with_empty_retrieval_keys_test() {
+        let mut config: Config = generate_test_config();
+        config.haiku.db_config.number_memory_to_retrieve = "100".to_string();
+
+        let database = DbManager::init_db(&config)
+            .await
+            .expect("Failed to initialize database");
+
+        let float_vec: Vec<f32> = vec![0.1, 0.2, 0.3, 0.4];
+        let text: String = "Text db ops".to_string();
+        let storage_keys: HashMap<String, String> = [
+            ("key1".to_string(), "1".to_string()),
+            ("key2".to_string(), "2".to_string()),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+
+        let mut i = 0;
+        while i < 5 {
+            DbManager::store_memory(
+                &database,
+                text.clone(),
+                float_vec.clone(),
+                storage_keys.clone(),
+            )
+            .await
+            .expect("Failed to insert embedding and text");
+
+            i += 1;
+        }
+
+        let vec: Vec<f32> = vec![0.1, 0.1, 0.1, 0.1];
+        let retrieval_keys: HashMap<String, String> = [].iter().cloned().collect();
+        let retrieved_memories = DbManager::retrieve_similar_memories(
+            &database,
+            vec,
+            retrieval_keys,
+            config.haiku.db_config.number_memory_to_retrieve,
+        )
+        .await
+        .expect("Failed to retrieve memories");
+
+        assert_ne!(
+            retrieved_memories.is_empty(),
+            true,
+            "Incorrect number of memories retrieved"
         );
     }
 
