@@ -1,5 +1,6 @@
 use clap::Args;
 
+use eyre::eyre;
 use tokio::sync::mpsc;
 
 use starknet_crypto::Felt;
@@ -46,7 +47,8 @@ impl RunSubcommand {
             config.haiku.metadata.torii_url.clone(),
             config.haiku.metadata.rpc_url.clone(),
             config.haiku.metadata.relay_url.clone(),
-            Felt::from_hex(&config.haiku.metadata.world_address.clone()).unwrap(),
+            Felt::from_hex(&config.haiku.metadata.world_address.clone())
+                .map_err(|e| eyre!("Invalid world address: {}", e))?,
         )
         .await
         .expect("Failed to connect to the Torii client");
