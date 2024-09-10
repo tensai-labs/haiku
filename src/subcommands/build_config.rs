@@ -67,8 +67,10 @@ impl BuildConfigSubcommand {
             }
         }
 
-        let mut config = Config::default();
-        config.events = events;
+        let config = Config {
+            events,
+            ..Default::default()
+        };
 
         // write the config to a config_output.toml file
         let config_output_path = Utf8PathBuf::from(self.output_config_file_path);

@@ -73,14 +73,15 @@ impl PromptHandler {
                 .clone(),
         )
         .await?;
+
         let mut improved_prompt = String::from(&self.config.haiku.context.story);
-        improved_prompt.push_str("An event happened in the world.");
+        improved_prompt.push_str("An event happened in the world. ");
         improved_prompt.push_str(&prompt.prompt);
-        if memories.len() != 0 {
+        if !memories.is_empty() {
             improved_prompt.push_str(
-                "For context, here are some memories of similar events related to this one",
+                " For context, here are some prompts generated from past events. You must use them in your answer",
             );
-            for (_, memory) in memories.iter().enumerate() {
+            for memory in memories {
                 improved_prompt.push_str(&format!("\n{}.", memory));
             }
         }
@@ -107,6 +108,7 @@ impl PromptHandler {
             response,
             prompt.timestamp,
         );
+
         self.send_event_messaging(event_message).await?;
 
         Ok(())

@@ -40,7 +40,7 @@ impl EventHandler {
             tracing::debug!("Received event");
         }
 
-        if entity.models.len() == 0 {
+        if entity.models.is_empty() {
             return Err(eyre!("Empty models for event or first event received"));
         }
 
@@ -89,11 +89,7 @@ impl EventHandler {
             }
 
             if event_config.db_keys.retrieval_keys.contains(&child.name) {
-                let primitive = child
-                    .ty
-                    .as_primitive()
-                    .expect("Expected a primitive")
-                    .clone();
+                let primitive = *child.ty.as_primitive().expect("Expected a primitive");
                 let felts = primitive
                     .serialize()
                     .expect("Failed to deserialize primitive");
@@ -103,11 +99,8 @@ impl EventHandler {
                     .insert(child.name.clone(), felts[0].to_hex_string());
             }
             if event_config.db_keys.storage_keys.contains(&child.name) {
-                let primitive = child
-                    .ty
-                    .as_primitive()
-                    .expect("Expected a primitive")
-                    .clone();
+                let primitive = *child.ty.as_primitive().expect("Expected a primitive");
+
                 let felts = primitive
                     .serialize()
                     .expect("Failed to deserialize primitive");
@@ -145,13 +138,13 @@ fn ty_to_string(ty: &Ty) -> eyre::Result<String> {
                 })?)?)
             }
             _ => Ok(u64::from_str_radix(
-                &format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
+                format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
                 16,
             )?
             .to_string()),
         },
         _ => Ok(u64::from_str_radix(
-            &format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
+            format!("{:?}", ty.serialize()?[0]).trim_start_matches("0x"),
             16,
         )?
         .to_string()),
