@@ -9,6 +9,7 @@ pub struct DbManager;
 
 impl DbManager {
     pub async fn init_db(config: &Config) -> eyre::Result<Connection> {
+        #[allow(clippy::missing_transmute_annotations)]
         unsafe {
             sqlite3_auto_extension(Some(std::mem::transmute(sqlite3_vec_init as *const ())));
         }
@@ -131,23 +132,24 @@ impl DbManager {
             .call(move |conn| {
                 let transaction = conn.transaction()?;
                 let mut memories = Vec::new();
+                let intersect_query = retrieval_keys
+                    .iter()
+                    .map(|(key, id)| format!("SELECT value FROM {key} WHERE id = '{id}'"))
+                    .collect::<Vec<String>>()
+                    .join(" INTERSECT ");
 
-                let mut values = Vec::new();
-                for (key, id) in &retrieval_keys {
-                    let query = format!("SELECT value FROM {key} WHERE id = ?");
-                    let mut stmt = transaction.prepare(&query)?;
-                    let rows = stmt.query_map([id], |row| row.get::<_, String>(0))?;
-
-                    for value in rows {
-                        values.push(value?);
-                    }
-                }
-
-                let query = if values.is_empty() {
-                    format!("SELECT content FROM description ORDER BY vec_distance_cosine((SELECT vector FROM embedding WHERE rowid = description.rowid), ?) ASC LIMIT {limit}")
+                let query = if intersect_query.is_empty() {
+                    format!(
+                        "SELECT content FROM description 
+                        ORDER BY vec_distance_cosine(
+                            (SELECT vector FROM embedding WHERE rowid = description.rowid), 
+                            ?
+                        ) ASC 
+                        LIMIT {limit}"
+                    )
                 } else {
                     format!(
-                    "SELECT content 
+                        "SELECT content 
                         FROM description 
                         WHERE rowid IN ({}) 
                         ORDER BY vec_distance_cosine(
@@ -155,8 +157,9 @@ impl DbManager {
                             ?
                         ) ASC 
                         LIMIT {limit}",
-                    values.join(","),
-                )};
+                        intersect_query
+                    )
+                };
 
                 let vector_bytes: Vec<u8> = query_embedding
                     .iter()

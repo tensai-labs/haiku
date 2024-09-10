@@ -57,7 +57,7 @@ mod tests {
         .expect("Failed to retrieve memories");
 
         assert_eq!(
-            retrieved_memories.iter().count(),
+            retrieved_memories.len(),
             1,
             "Incorrect number of memories retrieved"
         );
@@ -168,9 +168,8 @@ mod tests {
         .await
         .expect("Failed to retrieve memories");
 
-        assert_ne!(
-            retrieved_memories.is_empty(),
-            true,
+        assert!(
+            !retrieved_memories.is_empty(),
             "Incorrect number of memories retrieved"
         );
     }
