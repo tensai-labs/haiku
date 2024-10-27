@@ -201,7 +201,7 @@ mod tests {
                 storage_keys: vec!["key1".to_string(), "key2".to_string()],
                 retrieval_keys: vec!["player".to_string()],
             },
-            keys_mapping: vec![
+            keys_mapping: Some(vec![
                 KeysMapping {
                     key: "slip".to_string(),
                     alias: "realm_entity_id".to_string(),
@@ -210,7 +210,7 @@ mod tests {
                     key: "target_entity_id".to_string(),
                     alias: "realm_entity_id".to_string(),
                 },
-            ],
+            ]),
         });
 
         config
