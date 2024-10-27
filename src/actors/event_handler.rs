@@ -129,7 +129,7 @@ impl EventHandler {
 
 fn ty_to_string(ty: &Ty) -> eyre::Result<String> {
     match ty {
-        Ty::Enum(e) => Ok(e.option().unwrap_or_default().to_ascii_lowercase()),
+        Ty::Enum(e) => Ok(e.option()?.name.to_ascii_lowercase()),
         Ty::Primitive(p) => match p {
             Primitive::ContractAddress(addr) => Ok(addr.unwrap().to_hex_string()),
             Primitive::Felt252(felt) => {
