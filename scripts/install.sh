@@ -7,23 +7,57 @@ BASE_DIR=${XDG_CONFIG_HOME:-$HOME}
 HAIKU_DIR=${HAIKU_DIR-"$BASE_DIR/.haiku"}
 HAIKU_BIN_DIR="$HAIKU_DIR/bin"
 HAIKU_MAN_DIR="$HAIKU_DIR/share/man/man1"
+BIN_PATH="$HAIKU_BIN_DIR/haiku"
 
 # Allow specifying a custom tag via command line argument
-TAG=${1:-"v0.0.3"}  # Default to v0.0.2 if no argument is provided
+TAG=${1:-"v0.0.3"}
+BUILD_FROM_SOURCE=false
 
-# Update the BIN_URL to use the specified tag
-BIN_URL="https://github.com/edisontim/haiku/releases/download/$TAG/haiku"
-
-echo "Installing haiku version $TAG..."
-
-BIN_PATH="$HAIKU_BIN_DIR/haiku"
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --latest) BUILD_FROM_SOURCE=true ;;
+        *) TAG="$1" ;;
+    esac
+    shift
+done
 
 # Create the .haiku bin directory if it doesn't exist
 mkdir -p $HAIKU_BIN_DIR
 
-# Download the binary file
-curl -# -L $BIN_URL -o $BIN_PATH
-chmod +x $BIN_PATH
+if [ "$BUILD_FROM_SOURCE" = true ]; then
+    echo "Building latest version from source..."
+    
+    # Check if required tools are installed
+    if ! command -v cargo &> /dev/null; then
+        echo "Error: cargo is required to build from source. Please install Rust from https://rustup.rs/"
+        exit 1
+    fi
+    
+    # Clone and build
+    TMP_DIR=$(mktemp -d)
+    git clone https://github.com/tensai-labs/haiku.git "$TMP_DIR"
+    cd "$TMP_DIR"
+    cargo build --release
+    cp target/release/haiku "$BIN_PATH"
+    rm -rf "$TMP_DIR"
+else
+    echo "Installing haiku version $TAG..."
+    BIN_URL="https://github.com/tensai-labs/haiku/releases/download/v$TAG/haiku"
+    if ! curl -# -L $BIN_URL -o $BIN_PATH; then
+        echo "Error: Failed to download haiku binary"
+        exit 1
+    fi
+    
+    # Make the binary executable
+    chmod +x $BIN_PATH
+    
+    # Verify the binary is executable
+    if ! $BIN_PATH --version &> /dev/null; then
+        echo "Error: Downloaded file is not a valid executable"
+        rm -f $BIN_PATH
+        exit 1
+    fi
+fi
 
 # Store the correct profile file (i.e. .profile for bash or .zshenv for ZSH).
 case $SHELL in
