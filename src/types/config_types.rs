@@ -143,7 +143,8 @@ pub struct Event {
     pub tag: String,
     pub prompt: FieldsContext,
     pub db_keys: DbKeys,
-    pub keys_mapping: Vec<KeysMapping>,
+    #[serde(default)]
+    pub keys_mapping: Option<Vec<KeysMapping>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]

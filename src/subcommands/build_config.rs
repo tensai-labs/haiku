@@ -55,13 +55,13 @@ impl BuildConfigSubcommand {
                     storage_keys: vec![],
                     retrieval_keys: vec![],
                 },
-                keys_mapping: keys
+                keys_mapping: Some(keys
                     .iter()
                     .map(|key| KeysMapping {
                         key: key.name.clone(),
                         alias: String::new(),
                     })
-                    .collect(),
+                    .collect()),
             };
                 events.push(event);
             }
