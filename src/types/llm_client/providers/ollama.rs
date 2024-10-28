@@ -3,19 +3,22 @@ use eyre::{eyre, Result};
 use reqwest::Client;
 use serde_json::Value;
 
+use crate::secrets::Secrets;
 use crate::types::config_types::Config;
 use crate::types::llm_client::traits::{ChatCompletionProvider, EmbeddingProvider};
 
 pub struct OllamaProvider {
     config: Config,
     client: Client,
+    secrets: Secrets,
 }
 
 impl OllamaProvider {
-    pub fn new(config: &Config) -> Self {
+    pub fn new(config: &Config, secrets: &Secrets) -> Self {
         Self {
             config: config.clone(),
             client: Client::new(),
+            secrets: secrets.clone(),
         }
     }
 }
